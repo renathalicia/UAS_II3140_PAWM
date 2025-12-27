@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "LingoBee",
+    "slug": "lingobee",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "plugins": [
+      "expo-font"
+    ],
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "jsEngine": "hermes",
+    "android": {
+      "package": "com.catherinealicia08.lingobee"
+    }
+  }
+}
