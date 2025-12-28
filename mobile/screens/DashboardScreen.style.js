@@ -17,60 +17,52 @@ export default StyleSheet.create({
     paddingBottom: 24,
   },
 
-  /* ===== Top Bar (menu + streak + lvl + xp) ===== */
+  /* Top Bar */
   topBar: {
-    paddingTop: 6,
-    paddingBottom: 8,
+    paddingTop: 8,
+    paddingBottom: 10,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-  },
-  menuBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   topStats: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 12,
   },
   topStatItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 10,
-    height: 34,
+    gap: 8,
+    paddingHorizontal: 12,
+    height: 42,
     borderRadius: 999,
-    backgroundColor: '#fff',
+    backgroundColor: 'transparent',
   },
   topStatLabel: {
-    fontSize: 12,
+    fontSize: 15,
     color: '#6b7280',
     fontWeight: '700',
   },
   topStatText: {
-    fontSize: 13,
+    fontSize: 16,
     color: '#111827',
-    fontWeight: '800',
+    fontWeight: '900',
   },
   xpWrap: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    paddingHorizontal: 12,
-    height: 34,
+    gap: 12,
+    paddingHorizontal: 14,
+    height: 42,
     borderRadius: 999,
-    backgroundColor: '#fff',
+    backgroundColor: 'transparent',
   },
   xpBar: {
     flex: 1,
-    height: 10,
+    height: 12,
     borderRadius: 999,
     backgroundColor: '#e5e7eb',
     overflow: 'hidden',
@@ -81,15 +73,15 @@ export default StyleSheet.create({
     backgroundColor: '#34a853',
   },
   xpText: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#111827',
     fontWeight: '700',
   },
 
-  /* ===== Header block (Halo + subtitle) ===== */
+  /* Header */
   headerBlock: {
-    marginTop: 6,
-    marginBottom: 12,
+    marginTop: 8,
+    marginBottom: 14,
   },
   helloText: {
     fontSize: 22,
@@ -102,12 +94,12 @@ export default StyleSheet.create({
     fontSize: 13,
   },
 
-  /* ===== Search ===== */
+  /* Search */
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    marginBottom: 14,
+    marginBottom: 16,
   },
   searchInputWrap: {
     flex: 1,
@@ -141,9 +133,9 @@ export default StyleSheet.create({
     borderColor: '#e5e7eb',
   },
 
-  /* ===== Featured carousel ===== */
+  /* Featured */
   featuredWrap: {
-    marginBottom: 14,
+    marginBottom: 16,
   },
   featuredCard: {
     backgroundColor: '#fff',
@@ -151,6 +143,7 @@ export default StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#eef2f7',
+    marginRight: 12,
   },
   featuredImage: {
     width: '100%',
@@ -201,9 +194,9 @@ export default StyleSheet.create({
     backgroundColor: '#0b4d78',
   },
 
-  /* ===== Materi header + filter pills ===== */
+  /* Materi header + filter pills */
   materiHeader: {
-    marginTop: 6,
+    marginTop: 8,
   },
   sectionTitle: {
     fontSize: 20,
@@ -217,6 +210,54 @@ export default StyleSheet.create({
     gap: 12,
     marginBottom: 12,
   },
+
+  /* Custom Dropdown */
+  dropdownButton: {
+    flex: 1,
+    height: 46,
+    borderRadius: 999,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    paddingHorizontal: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  dropdownLabel: {
+    color: '#111827',
+    fontSize: 14,
+  },
+  dropdownBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.15)',
+    justifyContent: 'center',
+    paddingHorizontal: 28,
+  },
+  dropdownModal: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    maxHeight: 320,
+    overflow: 'hidden',
+  },
+  dropdownItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f5f9',
+  },
+  dropdownItemText: {
+    fontSize: 15,
+    color: '#111827',
+  },
+  dropdownItemSelected: {
+    backgroundColor: '#eef6ff',
+  },
+  dropdownItemTextSelected: {
+    color: '#0b4d78',
+    fontWeight: '700',
+  },
+
   pickerPill: {
     flex: 1,
     height: 46,
@@ -228,7 +269,7 @@ export default StyleSheet.create({
     justifyContent: 'center',
   },
 
-  /* ===== Materials grid ===== */
+  /* Materials grid */
   materialGridRow: {
     justifyContent: 'space-between',
   },
@@ -240,7 +281,6 @@ export default StyleSheet.create({
     borderWidth: 1,
     borderColor: '#eef2f7',
     marginBottom: 12,
-    // supaya jarak antar kolom rapi:
     marginRight: 12,
     minWidth: 160,
     maxWidth: 230,
@@ -283,5 +323,6 @@ export default StyleSheet.create({
   emptyText: {
     color: '#6b7280',
     paddingBottom: 16,
+    paddingTop: 8,
   },
 });

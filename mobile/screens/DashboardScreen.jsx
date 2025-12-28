@@ -10,27 +10,72 @@ import {
   Image,
   Alert,
   Dimensions,
+  Modal,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Picker } from '@react-native-picker/picker';
 
 import styles from './DashboardScreen.style';
 import { getSupabase } from '../services/supabase';
 
 const XP_MAX = 100;
 
+function Dropdown({ label, value, onSelect, options = [] }) {
+  const [open, setOpen] = useState(false);
+
+  const handleSelect = (opt) => {
+    setOpen(false);
+    onSelect(opt.value);
+  };
+
+  const displayLabel = () => {
+    if (!value) return label;
+    const found = options.find((o) => o.value === value);
+    return found ? found.label : String(value);
+  };
+
+  return (
+    <>
+      <TouchableOpacity style={styles.dropdownButton} onPress={() => setOpen(true)} activeOpacity={0.8}>
+        <Text style={styles.dropdownLabel}>{displayLabel()}</Text>
+        <Ionicons name="chevron-down" size={18} color="#0b2b3a" />
+      </TouchableOpacity>
+
+      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
+        <TouchableOpacity style={styles.dropdownBackdrop} activeOpacity={1} onPress={() => setOpen(false)}>
+          <View style={styles.dropdownModal}>
+            <FlatList
+              data={options}
+              keyExtractor={(it) => String(it.value)}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[styles.dropdownItem, item.value === value && styles.dropdownItemSelected]}
+                  onPress={() => handleSelect(item)}
+                >
+                  <Text style={[styles.dropdownItemText, item.value === value && styles.dropdownItemTextSelected]}>
+                    {item.label}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </TouchableOpacity>
+      </Modal>
+    </>
+  );
+}
+
 export default function DashboardScreen({ navigation, route }) {
   const userId = route?.params?.userId;
 
   const [loading, setLoading] = useState(true);
 
-  const [user, setUser] = useState(null); // users: id, full_name, level, xp, streak
-  const [stats, setStats] = useState(null); // user_practice_stats (optional)
+  const [user, setUser] = useState(null);
+  const [stats, setStats] = useState(null);
 
-  const [featured, setFeatured] = useState([]); // featured_news
+  const [featured, setFeatured] = useState([]);
   const [featuredIndex, setFeaturedIndex] = useState(0);
 
-  const [materials, setMaterials] = useState([]); // learning_materials
+  const [materials, setMaterials] = useState([]);
   const [chapterOptions, setChapterOptions] = useState([]);
   const [categoryOptions, setCategoryOptions] = useState([]);
 
@@ -69,43 +114,20 @@ export default function DashboardScreen({ navigation, route }) {
 
     const supabase = getSupabase();
 
-    const [
-      userRes,
-      statsRes,
-      featuredRes,
-      chaptersRes,
-      categoriesRes,
-    ] = await Promise.all([
-      supabase
-        .from('users')
-        .select('id, full_name, level, xp, streak')
-        .eq('id', userId)
-        .maybeSingle(),
-
+    const [userRes, statsRes, featuredRes, chaptersRes, categoriesRes] = await Promise.all([
+      supabase.from('users').select('id, full_name, level, xp, streak').eq('id', userId).maybeSingle(),
       supabase
         .from('user_practice_stats')
         .select('total_xp_earned, current_streak_days')
         .eq('user_id', userId)
         .maybeSingle(),
-
       supabase
         .from('featured_news')
-        .select('id, title, description, image_url, link_url')
+        .select('id, title, description, image_url, link_url, content')
         .eq('is_active', true)
         .order('order_index', { ascending: true }),
-
-      // distinct-like (ambil semua lalu unique di client; schema fixed)
-      supabase
-        .from('learning_materials')
-        .select('chapter')
-        .eq('is_active', true)
-        .not('chapter', 'is', null),
-
-      supabase
-        .from('learning_materials')
-        .select('category')
-        .eq('is_active', true)
-        .not('category', 'is', null),
+      supabase.from('learning_materials').select('chapter').eq('is_active', true).not('chapter', 'is', null),
+      supabase.from('learning_materials').select('category').eq('is_active', true).not('category', 'is', null),
     ]);
 
     if (userRes.error) throw userRes.error;
@@ -130,7 +152,7 @@ export default function DashboardScreen({ navigation, route }) {
 
     let q = supabase
       .from('learning_materials')
-      .select('id, title, description, chapter, category, thumbnail_url, date_published')
+      .select('id, title, description, chapter, category, level, thumbnail_url, content_url, date_published')
       .eq('is_active', true)
       .order('date_published', { ascending: false })
       .limit(50);
@@ -138,10 +160,8 @@ export default function DashboardScreen({ navigation, route }) {
     if (filters.chapter) q = q.eq('chapter', filters.chapter);
     if (filters.category) q = q.eq('category', filters.category);
 
-    // search ke title (dan fallback description bila mau)
     if (filters.search) {
-      // PostgREST OR: title ILIKE or description ILIKE
-      const s = filters.search.replace(/,/g, ''); // hindari comma bikin or() error
+      const s = filters.search.replace(/,/g, '');
       q = q.or(`title.ilike.%${s}%,description.ilike.%${s}%`);
     }
 
@@ -170,14 +190,12 @@ export default function DashboardScreen({ navigation, route }) {
     return () => {
       mounted = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   useEffect(() => {
     let mounted = true;
     (async () => {
       try {
-        // jangan refetch ketika init masih loading pertama kali
         if (!userId) return;
         await fetchMaterials();
       } catch (e) {
@@ -189,7 +207,6 @@ export default function DashboardScreen({ navigation, route }) {
     return () => {
       mounted = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters.chapter, filters.category, filters.search, userId]);
 
   const applySearch = () => {
@@ -203,15 +220,13 @@ export default function DashboardScreen({ navigation, route }) {
 
   const onFeaturedScroll = (e) => {
     const x = e.nativeEvent.contentOffset.x;
-    const itemW = styles.featuredCardWidth; // not usable here (styles is object)
-    // hitung index pakai lebar card yang kita pakai di render
-    const CARD_W = Math.round(screenW - 32); // padding 16 kiri-kanan
+    const CARD_W = Math.round(screenW - 64);
     const idx = Math.round(x / CARD_W);
     setFeaturedIndex(Math.max(0, Math.min(idx, (featured?.length || 1) - 1)));
   };
 
   const renderFeaturedItem = ({ item }) => {
-    const CARD_W = Math.round(screenW - 32);
+    const CARD_W = Math.round(screenW - 64);
 
     return (
       <View style={[styles.featuredCard, { width: CARD_W }]}>
@@ -263,21 +278,29 @@ export default function DashboardScreen({ navigation, route }) {
     );
   };
 
+  // Build dropdown option arrays (include "Semua" option)
+  const chapterOptionsForDropdown = [
+    { label: 'Semua Bab', value: '' },
+    // prefer DB chapters if available, else fallback Chapter 1..9
+    ...(chapterOptions.length
+      ? chapterOptions.map((c) => ({ label: c, value: c }))
+      : Array.from({ length: 9 }, (_, i) => ({ label: `Chapter ${i + 1}`, value: `Chapter ${i + 1}` }))),
+  ];
+
+  const defaultCategories = ['Grammar', 'Listening', 'Reading', 'Speaking', 'Vocabulary'];
+  const categoryOptionsForDropdown = [
+    { label: 'Semua Kategori', value: '' },
+    ...(categoryOptions.length
+      ? categoryOptions.map((c) => ({ label: c, value: c }))
+      : defaultCategories.map((c) => ({ label: c, value: c }))),
+  ];
+
   const Header = () => (
     <View>
-      {/* Safe top padding: tidak mentok notch/status bar */}
       <View style={styles.topBar}>
-        <TouchableOpacity
-          style={styles.menuBtn}
-          onPress={() => (navigation?.openDrawer ? navigation.openDrawer() : null)}
-          activeOpacity={0.8}
-        >
-          <Ionicons name="menu" size={22} color="#111" />
-        </TouchableOpacity>
-
         <View style={styles.topStats}>
           <View style={styles.topStatItem}>
-            <Ionicons name="flame" size={16} color="#ff7a00" />
+            <Ionicons name="flame" size={20} color="#ff7a00" />
             <Text style={styles.topStatText}>{streakValue}</Text>
           </View>
 
@@ -302,7 +325,6 @@ export default function DashboardScreen({ navigation, route }) {
         <Text style={styles.subGreeting}>Selamat datang di Lingobee</Text>
       </View>
 
-      {/* Search bar dulu (sebelum featured) */}
       <View style={styles.searchRow}>
         <View style={styles.searchInputWrap}>
           <TextInput
@@ -326,21 +348,20 @@ export default function DashboardScreen({ navigation, route }) {
         </TouchableOpacity>
       </View>
 
-      {/* Featured carousel horizontal (tanpa judul "Berita Utama") */}
       {featured?.length ? (
         <View style={styles.featuredWrap}>
           <FlatList
             ref={featuredListRef}
             data={featured}
-            keyExtractor={(it) => it.id}
+            keyExtractor={(it) => String(it.id)}
             horizontal
             showsHorizontalScrollIndicator={false}
-            pagingEnabled
-            snapToAlignment="start"
+            snapToAlignment="center"
             decelerationRate="fast"
             onScroll={onFeaturedScroll}
             scrollEventThrottle={16}
             renderItem={renderFeaturedItem}
+            contentContainerStyle={{ paddingHorizontal: 16 }}
           />
 
           <View style={styles.dotsRow}>
@@ -351,34 +372,23 @@ export default function DashboardScreen({ navigation, route }) {
         </View>
       ) : null}
 
-      {/* Materi + filter */}
       <View style={styles.materiHeader}>
         <Text style={styles.sectionTitle}>Materi</Text>
 
         <View style={styles.filterRow}>
-          <View style={styles.pickerPill}>
-            <Picker
-              selectedValue={filters.chapter}
-              onValueChange={(v) => setFilters((p) => ({ ...p, chapter: v }))}
-            >
-              <Picker.Item label="Semua Bab" value="" />
-              {chapterOptions.map((c) => (
-                <Picker.Item key={c} label={c} value={c} />
-              ))}
-            </Picker>
-          </View>
+          <Dropdown
+            label="Semua Bab"
+            value={filters.chapter}
+            options={chapterOptionsForDropdown}
+            onSelect={(v) => setFilters((p) => ({ ...p, chapter: v }))}
+          />
 
-          <View style={styles.pickerPill}>
-            <Picker
-              selectedValue={filters.category}
-              onValueChange={(v) => setFilters((p) => ({ ...p, category: v }))}
-            >
-              <Picker.Item label="Semua Kategori" value="" />
-              {categoryOptions.map((c) => (
-                <Picker.Item key={c} label={c} value={c} />
-              ))}
-            </Picker>
-          </View>
+          <Dropdown
+            label="Semua Kategori"
+            value={filters.category}
+            options={categoryOptionsForDropdown}
+            onSelect={(v) => setFilters((p) => ({ ...p, category: v }))}
+          />
         </View>
       </View>
     </View>
@@ -398,17 +408,13 @@ export default function DashboardScreen({ navigation, route }) {
     <SafeAreaView style={styles.safe}>
       <FlatList
         data={materials}
-        keyExtractor={(it) => it.id}
+        keyExtractor={(it) => String(it.id)}
         numColumns={2}
         columnWrapperStyle={styles.materialGridRow}
         contentContainerStyle={styles.listContent}
         ListHeaderComponent={Header}
         renderItem={renderMaterialItem}
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>
-            Tidak ada materi untuk filter/pencarian ini.
-          </Text>
-        }
+        ListEmptyComponent={<Text style={styles.emptyText}>Tidak ada materi untuk filter/pencarian ini.</Text>}
       />
     </SafeAreaView>
   );
