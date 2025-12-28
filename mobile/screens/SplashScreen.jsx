@@ -1,11 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, Image } from 'react-native';
 import { Asset } from 'expo-asset';
 import style from './SplashScreen.style';
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const SPLASH_MIN_MS = 5500;
 
 export default function SplashScreen({ navigation }) {
+  const didNavigateRef = useRef(false);
+
   useEffect(() => {
     let cancelled = false;
 
@@ -18,14 +21,18 @@ export default function SplashScreen({ navigation }) {
             require('../assets/itb-logo.png'),
             require('../assets/logo-lingobee.png'),
           ]),
-          wait(5500),
+          wait(SPLASH_MIN_MS),
         ]);
       } catch {
-        // kalau preload gagal, tetap lanjut setelah durasi splash
-        await wait(5500);
+        // kalau preload gagal, tetap lanjut setelah durasi splash minimum
+        await wait(SPLASH_MIN_MS);
       }
 
-      if (!cancelled) navigation.replace('Login');
+      if (cancelled) return;
+      if (didNavigateRef.current) return;
+
+      didNavigateRef.current = true;
+      navigation.replace('Auth');
     })();
 
     return () => {

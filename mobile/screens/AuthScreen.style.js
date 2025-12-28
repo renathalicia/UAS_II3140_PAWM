@@ -1,3 +1,4 @@
+
 import { StyleSheet } from 'react-native';
 import { COLORS } from '../style/colors';
 import { SPACING } from '../style/spacing';
@@ -13,14 +14,14 @@ export default StyleSheet.create({
     backgroundColor: COLORS.overlay,
     paddingHorizontal: SPACING.lg,
     paddingTop: SPACING.xl,
-    paddingBottom: 0,               // biar logo bawah lebih mepet
+    paddingBottom: 0,
     justifyContent: 'space-between',
   },
 
   /* ===== ZONA ATAS ===== */
   topSection: {
     alignItems: 'center',
-    marginTop: SPACING.xl + SPACING.sm, // ⬅️ ITB turun sedikit lagi
+    marginTop: SPACING.xl + SPACING.sm,
   },
 
   logoITB: {
@@ -32,39 +33,52 @@ export default StyleSheet.create({
   /* ===== ZONA TENGAH ===== */
   middleSection: {
     width: '100%',
-    transform: [{ translateY: SPACING.lg }], // ⬅️ TURUN KE TENGAH LAYAR
+    transform: [{ translateY: SPACING.lg }],
   },
 
-  switch: {
+  /* ===== SWITCH ===== */
+  switchContainer: {
     flexDirection: 'row',
-    marginBottom: SPACING.lg,
-  },
-
-  activeBtn: {
-    flex: 1,
-    backgroundColor: COLORS.primary,
-    paddingVertical: SPACING.sm,
-    borderRadius: 20,
-  },
-
-  inactiveBtn: {
-    flex: 1,
     backgroundColor: COLORS.secondary,
-    paddingVertical: SPACING.sm,
-    borderRadius: 20,
-    marginLeft: SPACING.sm,
+    borderRadius: 22,
+    overflow: 'hidden',
+    position: 'relative',
+    height: 44, // fixed height -> posisi Y stabil
+    width: 260, // compact width (tidak terlalu sempit)
+    alignSelf: 'center', // center horizontally so X position stable
   },
 
-  activeText: {
+  slider: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    height: '100%',
+    backgroundColor: COLORS.primary,
+    borderRadius: 22,
+  },
+
+  tab: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  tabText: {
     ...TYPOGRAPHY.button,
+    fontSize: 18, // diperbesar sedikit
+  },
+
+  tabTextActive: {
     color: COLORS.textWhite,
-    textAlign: 'center',
   },
 
-  inactiveText: {
-    ...TYPOGRAPHY.button,
+  tabTextInactive: {
     color: COLORS.textPrimary,
-    textAlign: 'center',
+  },
+
+  /* ===== FORM ===== */
+  form: {
+    marginTop: SPACING.lg,
   },
 
   label: {
@@ -89,12 +103,24 @@ export default StyleSheet.create({
     alignSelf: 'flex-end',
   },
 
+  submitText: {
+    ...TYPOGRAPHY.button,
+    color: COLORS.textWhite,
+    textAlign: 'center',
+  },
+
+
+  invisible: {
+    opacity: 0,
+  },
+
   /* ===== ZONA BAWAH ===== */
   bottomSection: {
     alignItems: 'center',
-    marginBottom: -SPACING.sm, // ⬅️ LOGO LINGOBEE LEBIH MEPET BAWAH
+    marginBottom: -SPACING.sm,
   },
 
+  // diperkecil supaya proporsional
   logoBee: {
     width: 150,
     height: 150,
