@@ -11,6 +11,8 @@ import {
   Alert,
   Dimensions,
   Modal,
+  Platform,
+  StatusBar,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -18,6 +20,7 @@ import styles from './DashboardScreen.style';
 import { getSupabase } from '../services/supabase';
 
 const XP_MAX = 100;
+const TOPBAR_HEIGHT = 56; // hanya top bar (streak/level/xp) yang fixed
 
 function Dropdown({ label, value, onSelect, options = [] }) {
   const [open, setOpen] = useState(false);
@@ -66,6 +69,8 @@ function Dropdown({ label, value, onSelect, options = [] }) {
 
 export default function DashboardScreen({ navigation, route }) {
   const userId = route?.params?.userId;
+  const screenW = Dimensions.get('window').width;
+  const FEATURED_CARD_WIDTH = Math.round(screenW - 64);
 
   const [loading, setLoading] = useState(true);
 
@@ -87,7 +92,6 @@ export default function DashboardScreen({ navigation, route }) {
   const [searchInput, setSearchInput] = useState('');
 
   const featuredListRef = useRef(null);
-  const screenW = Dimensions.get('window').width;
 
   const xpValue = useMemo(() => {
     const raw = user?.xp ?? stats?.total_xp_earned ?? 0;
@@ -220,16 +224,16 @@ export default function DashboardScreen({ navigation, route }) {
 
   const onFeaturedScroll = (e) => {
     const x = e.nativeEvent.contentOffset.x;
-    const CARD_W = Math.round(screenW - 64);
-    const idx = Math.round(x / CARD_W);
+    const step = FEATURED_CARD_WIDTH + 12;
+    const idx = Math.round(x / step);
     setFeaturedIndex(Math.max(0, Math.min(idx, (featured?.length || 1) - 1)));
   };
 
   const renderFeaturedItem = ({ item }) => {
-    const CARD_W = Math.round(screenW - 64);
+    const CARD_W = FEATURED_CARD_WIDTH;
 
     return (
-      <View style={[styles.featuredCard, { width: CARD_W }]}>
+      <View style={[styles.featuredCard, { width: CARD_W }]} key={String(item.id)}>
         {item.image_url ? (
           <Image source={{ uri: item.image_url }} style={styles.featuredImage} />
         ) : (
@@ -278,10 +282,8 @@ export default function DashboardScreen({ navigation, route }) {
     );
   };
 
-  // Build dropdown option arrays (include "Semua" option)
   const chapterOptionsForDropdown = [
     { label: 'Semua Bab', value: '' },
-    // prefer DB chapters if available, else fallback Chapter 1..9
     ...(chapterOptions.length
       ? chapterOptions.map((c) => ({ label: c, value: c }))
       : Array.from({ length: 9 }, (_, i) => ({ label: `Chapter ${i + 1}`, value: `Chapter ${i + 1}` }))),
@@ -295,29 +297,10 @@ export default function DashboardScreen({ navigation, route }) {
       : defaultCategories.map((c) => ({ label: c, value: c }))),
   ];
 
-  const Header = () => (
+  // Scrollable content header (greeting + search + featured + filter)
+  const ScrollableHeader = () => (
     <View>
-      <View style={styles.topBar}>
-        <View style={styles.topStats}>
-          <View style={styles.topStatItem}>
-            <Ionicons name="flame" size={20} color="#ff7a00" />
-            <Text style={styles.topStatText}>{streakValue}</Text>
-          </View>
-
-          <View style={styles.topStatItem}>
-            <Text style={styles.topStatLabel}>Lvl</Text>
-            <Text style={styles.topStatText}>{user?.level ?? 1}</Text>
-          </View>
-
-          <View style={styles.xpWrap}>
-            <View style={styles.xpBar}>
-              <View style={[styles.xpFill, { width: `${Math.round(xpProgress * 100)}%` }]} />
-            </View>
-            <Text style={styles.xpText}>{xpLabel}</Text>
-          </View>
-        </View>
-      </View>
-
+      {/* greeting + search are scrollable */}
       <View style={styles.headerBlock}>
         <Text style={styles.helloText} numberOfLines={1}>
           Halo, {user?.full_name ?? 'User'}
@@ -335,6 +318,7 @@ export default function DashboardScreen({ navigation, route }) {
             style={styles.searchInput}
             returnKeyType="search"
             onSubmitEditing={applySearch}
+            blurOnSubmit={Platform.OS === 'ios' ? false : true}
           />
           {searchInput?.length ? (
             <TouchableOpacity onPress={clearSearch} style={styles.clearBtn} hitSlop={10}>
@@ -356,12 +340,17 @@ export default function DashboardScreen({ navigation, route }) {
             keyExtractor={(it) => String(it.id)}
             horizontal
             showsHorizontalScrollIndicator={false}
-            snapToAlignment="center"
             decelerationRate="fast"
-            onScroll={onFeaturedScroll}
+            snapToInterval={FEATURED_CARD_WIDTH + 12}
+            snapToAlignment="start"
+            onMomentumScrollEnd={onFeaturedScroll}
             scrollEventThrottle={16}
             renderItem={renderFeaturedItem}
             contentContainerStyle={{ paddingHorizontal: 16 }}
+            initialNumToRender={3}
+            windowSize={5}
+            removeClippedSubviews={false}
+            pagingEnabled={false}
           />
 
           <View style={styles.dotsRow}>
@@ -404,17 +393,48 @@ export default function DashboardScreen({ navigation, route }) {
     );
   }
 
+  // compute status bar padding so top bar tidak menimpa status bar
+  const STATUSBAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight || 24 : 20;
+  const TOPBAR_TOTAL = TOPBAR_HEIGHT + STATUSBAR_HEIGHT;
+
   return (
     <SafeAreaView style={styles.safe}>
+      {/* ONLY TOP BAR fixed */}
+      <View style={[styles.topFixed, { height: TOPBAR_TOTAL, paddingTop: STATUSBAR_HEIGHT }]}>
+        <View style={styles.topBar}>
+          <View style={styles.topStats}>
+            <View style={styles.topStatItem}>
+              <Ionicons name="flame" size={20} color="#ff7a00" />
+              <Text style={styles.topStatText}>{streakValue}</Text>
+            </View>
+
+            <View style={styles.topStatItem}>
+              <Text style={styles.topStatLabel}>Lvl</Text>
+              <Text style={styles.topStatText}>{user?.level ?? 1}</Text>
+            </View>
+
+            <View style={styles.xpWrap}>
+              <View style={styles.xpBar}>
+                <View style={[styles.xpFill, { width: `${Math.round(xpProgress * 100)}%` }]} />
+              </View>
+              <Text style={styles.xpText}>{xpLabel}</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      {/* SCROLLABLE CONTENT (greeting, search, featured + materials)
+          add paddingTop so content starts below the fixed top bar */}
       <FlatList
         data={materials}
         keyExtractor={(it) => String(it.id)}
         numColumns={2}
         columnWrapperStyle={styles.materialGridRow}
-        contentContainerStyle={styles.listContent}
-        ListHeaderComponent={Header}
+        contentContainerStyle={[styles.listContent, { paddingTop: TOPBAR_TOTAL + 12 }]}
+        ListHeaderComponent={ScrollableHeader}
         renderItem={renderMaterialItem}
         ListEmptyComponent={<Text style={styles.emptyText}>Tidak ada materi untuk filter/pencarian ini.</Text>}
+        keyboardShouldPersistTaps="handled"
       />
     </SafeAreaView>
   );

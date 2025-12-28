@@ -17,36 +17,47 @@ export default StyleSheet.create({
     paddingBottom: 24,
   },
 
-  /* Top Bar */
+  /* ===== ONLY TOP BAR fixed ===== */
+  topFixed: {
+    position: 'absolute',
+    top: 20,
+    left: 0,
+    right: 0,
+    zIndex: 50,
+    backgroundColor: '#f5f7fa',
+    paddingHorizontal: 16,
+    paddingTop: 20, // status bar offset
+    paddingBottom: 0,
+  },
+
+  /* Top Bar - DIPERBESAR */
   topBar: {
-    paddingTop: 8,
-    paddingBottom: 10,
+    height: 70, // lebih tinggi
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
   },
   topStats: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 8,
   },
   topStatItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
     paddingHorizontal: 12,
-    height: 42,
+    height: 48, // lebih besar
     borderRadius: 999,
     backgroundColor: 'transparent',
   },
   topStatLabel: {
-    fontSize: 15,
+    fontSize: 16, // diperbesar dari 13
     color: '#6b7280',
-    fontWeight: '700',
+    fontWeight: '800',
   },
   topStatText: {
-    fontSize: 16,
+    fontSize: 20, // diperbesar dari 15
     color: '#111827',
     fontWeight: '900',
   },
@@ -56,13 +67,13 @@ export default StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     paddingHorizontal: 14,
-    height: 42,
+    height: 48, // lebih besar
     borderRadius: 999,
     backgroundColor: 'transparent',
   },
   xpBar: {
     flex: 1,
-    height: 12,
+    height: 14, // lebih tebal dari 10
     borderRadius: 999,
     backgroundColor: '#e5e7eb',
     overflow: 'hidden',
@@ -73,40 +84,42 @@ export default StyleSheet.create({
     backgroundColor: '#34a853',
   },
   xpText: {
-    fontSize: 14,
+    fontSize: 15, // diperbesar dari 12
     color: '#111827',
-    fontWeight: '700',
+    fontWeight: '800',
   },
 
-  /* Header */
+  /* Header block (scrollable) - DIANGKAT */
   headerBlock: {
-    marginTop: 8,
-    marginBottom: 14,
+    marginTop: 6, // dikecilkan dari 8 agar lebih dekat
+    marginBottom: 15,
+    paddingHorizontal: 16,
   },
   helloText: {
-    fontSize: 22,
+    fontSize: 22, // sedikit lebih besar
     fontWeight: '900',
     color: '#111827',
   },
   subGreeting: {
-    marginTop: 2,
+    marginTop: 5,
     color: '#6b7280',
-    fontSize: 13,
+    fontSize: 14, // sedikit lebih besar
   },
 
-  /* Search */
+  /* Search (scrollable) */
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    marginBottom: 16,
+    marginHorizontal: 16,
+    marginBottom: 8,
   },
   searchInputWrap: {
     flex: 1,
-    height: 46,
+    height: 40,
     borderRadius: 999,
     backgroundColor: '#fff',
-    paddingLeft: 14,
+    paddingLeft: 12,
     paddingRight: 10,
     borderWidth: 1,
     borderColor: '#e5e7eb',
@@ -124,8 +137,8 @@ export default StyleSheet.create({
   },
   searchBtn: {
     width: 46,
-    height: 46,
-    borderRadius: 23,
+    height: 40,
+    borderRadius: 12,
     backgroundColor: '#eef2f7',
     alignItems: 'center',
     justifyContent: 'center',
@@ -133,9 +146,9 @@ export default StyleSheet.create({
     borderColor: '#e5e7eb',
   },
 
-  /* Featured */
+  /* Featured & rest (unchanged) */
   featuredWrap: {
-    marginBottom: 16,
+    marginBottom: 14,
   },
   featuredCard: {
     backgroundColor: '#fff',
@@ -194,9 +207,9 @@ export default StyleSheet.create({
     backgroundColor: '#0b4d78',
   },
 
-  /* Materi header + filter pills */
   materiHeader: {
     marginTop: 8,
+    paddingHorizontal: 16,
   },
   sectionTitle: {
     fontSize: 20,
@@ -211,7 +224,6 @@ export default StyleSheet.create({
     marginBottom: 12,
   },
 
-  /* Custom Dropdown */
   dropdownButton: {
     flex: 1,
     height: 46,
@@ -228,62 +240,20 @@ export default StyleSheet.create({
     color: '#111827',
     fontSize: 14,
   },
-  dropdownBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.15)',
-    justifyContent: 'center',
-    paddingHorizontal: 28,
-  },
-  dropdownModal: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    maxHeight: 320,
-    overflow: 'hidden',
-  },
-  dropdownItem: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f1f5f9',
-  },
-  dropdownItemText: {
-    fontSize: 15,
-    color: '#111827',
-  },
-  dropdownItemSelected: {
-    backgroundColor: '#eef6ff',
-  },
-  dropdownItemTextSelected: {
-    color: '#0b4d78',
-    fontWeight: '700',
-  },
 
-  pickerPill: {
-    flex: 1,
-    height: 46,
-    borderRadius: 999,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    overflow: 'hidden',
-    justifyContent: 'center',
-  },
-
-  /* Materials grid */
+  /* Materials grid and cards */
   materialGridRow: {
     justifyContent: 'space-between',
+    paddingHorizontal: 16,
   },
   materialCard: {
-    flex: 1,
+    width: '48%',
     backgroundColor: '#fff',
     borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#eef2f7',
     marginBottom: 12,
-    marginRight: 12,
-    minWidth: 160,
-    maxWidth: 230,
   },
   materialImageWrap: {
     width: '100%',
@@ -324,5 +294,35 @@ export default StyleSheet.create({
     color: '#6b7280',
     paddingBottom: 16,
     paddingTop: 8,
+  },
+
+  dropdownBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.15)',
+    justifyContent: 'center',
+    paddingHorizontal: 28,
+  },
+  dropdownModal: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    maxHeight: 320,
+    overflow: 'hidden',
+  },
+  dropdownItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f5f9',
+  },
+  dropdownItemText: {
+    fontSize: 15,
+    color: '#111827',
+  },
+  dropdownItemSelected: {
+    backgroundColor: '#eef6ff',
+  },
+  dropdownItemTextSelected: {
+    color: '#0b4d78',
+    fontWeight: '700',
   },
 });

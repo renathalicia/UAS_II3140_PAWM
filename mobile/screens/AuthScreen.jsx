@@ -17,14 +17,11 @@ import { login, register } from '../services/authService';
 export default function AuthScreen() {
   const navigation = useNavigation();
 
-  const [mode, setMode] = useState('login'); // 'login' | 'register'
+  const [mode, setMode] = useState('login');
   const isLogin = mode === 'login';
   const isRegister = mode === 'register';
 
-  // slider animation (0 = login, 1 = register)
   const slideAnim = useRef(new Animated.Value(0)).current;
-
-  // measure switch width so translateX is numeric
   const [switchWidth, setSwitchWidth] = useState(0);
   const sliderWidth = useMemo(() => switchWidth / 2, [switchWidth]);
 
@@ -38,7 +35,6 @@ export default function AuthScreen() {
 
   const switchMode = (target) => {
     if (target === mode) return;
-
     setMode(target);
     Animated.spring(slideAnim, {
       toValue: target === 'login' ? 0 : 1,
@@ -46,22 +42,18 @@ export default function AuthScreen() {
     }).start();
   };
 
-  /* ===== FORM STATES ===== */
   const [fullName, setFullName] = useState('');
   const [nim, setNim] = useState('');
-  const [fakultas, setfakultas] = useState('');
+  const [fakultas, setFakultas] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = async () => {
     try {
       if (isLogin) {
         const user = await login(nim, password);
-
-        // Pindah ke Dashboard + kirim userId (karena login kamu pakai table users)
         navigation.replace('Dashboard', { userId: user.id });
       } else {
-        await register({ fullName, nim, password });
-
+        await register({ fullName, nim, fakultas, password });
         Alert.alert('Registrasi berhasil', 'Silakan login');
         switchMode('login');
       }
@@ -70,7 +62,6 @@ export default function AuthScreen() {
     }
   };
 
-  // ===== Slot atas harus sejajar antara login & register =====
   const slot1Label = isRegister ? 'Nama Lengkap' : 'NIM';
   const slot1Value = isRegister ? fullName : nim;
   const slot1OnChange = isRegister ? setFullName : setNim;
@@ -92,22 +83,12 @@ export default function AuthScreen() {
       fadeDuration={0}
     >
       <View style={styles.overlay}>
-        {/* ===== ZONA ATAS ===== */}
         <View style={styles.topSection}>
-          <Image
-            source={require('../assets/itb-logo.png')}
-            style={styles.logoITB}
-            fadeDuration={0}
-          />
+          <Image source={require('../assets/itb-logo.png')} style={styles.logoITB} fadeDuration={0} />
         </View>
 
-        {/* ===== ZONA TENGAH ===== */}
         <View style={styles.middleSection}>
-          {/* ===== SWITCH ===== */}
-          <View
-            style={styles.switchContainer}
-            onLayout={(e) => setSwitchWidth(e.nativeEvent.layout.width)}
-          >
+          <View style={styles.switchContainer} onLayout={(e) => setSwitchWidth(e.nativeEvent.layout.width)}>
             <Animated.View
               style={[
                 styles.slider,
@@ -131,9 +112,7 @@ export default function AuthScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* ===== FORM ===== */}
           <View style={styles.form}>
-            {/* Slot 1 */}
             <Text style={styles.label}>{slot1Label}</Text>
             <TextInput
               style={styles.input}
@@ -144,7 +123,6 @@ export default function AuthScreen() {
               autoCapitalize="none"
             />
 
-            {/* Slot 2 */}
             <Text style={styles.label}>{slot2Label}</Text>
             <TextInput
               style={styles.input}
@@ -156,18 +134,16 @@ export default function AuthScreen() {
               autoCapitalize="none"
             />
 
-            {/* Slot 3: Fakultas (register only, tapi tetap ambil tempat saat login) */}
             <View pointerEvents={isRegister ? 'auto' : 'none'} style={!isRegister && styles.invisible}>
               <Text style={styles.label}>Fakultas</Text>
               <TextInput
                 style={styles.input}
                 value={fakultas}
-                onChangeText={setfakultas}
+                onChangeText={setFakultas}
                 placeholder="Masukkan Fakultas"
               />
             </View>
 
-            {/* Slot 4: Password (register only, tapi tetap ambil tempat saat login) */}
             <View pointerEvents={isRegister ? 'auto' : 'none'} style={!isRegister && styles.invisible}>
               <Text style={styles.label}>Password</Text>
               <TextInput
@@ -186,13 +162,8 @@ export default function AuthScreen() {
           </View>
         </View>
 
-        {/* ===== ZONA BAWAH ===== */}
         <View style={styles.bottomSection}>
-          <Image
-            source={require('../assets/logo-lingobee.png')}
-            style={styles.logoBee}
-            fadeDuration={0}
-          />
+          <Image source={require('../assets/logo-lingobee.png')} style={styles.logoBee} fadeDuration={0} />
         </View>
       </View>
     </ImageBackground>
