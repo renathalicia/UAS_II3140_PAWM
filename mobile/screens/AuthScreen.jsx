@@ -9,11 +9,14 @@ import {
   Animated,
   Alert,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import styles from './AuthScreen.style';
 import { login, register } from '../services/authService';
 
 export default function AuthScreen() {
+  const navigation = useNavigation();
+
   const [mode, setMode] = useState('login'); // 'login' | 'register'
   const isLogin = mode === 'login';
   const isRegister = mode === 'register';
@@ -46,16 +49,19 @@ export default function AuthScreen() {
   /* ===== FORM STATES ===== */
   const [fullName, setFullName] = useState('');
   const [nim, setNim] = useState('');
-  const [faculty, setFaculty] = useState('');
+  const [fakultas, setfakultas] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = async () => {
     try {
       if (isLogin) {
-        await login(nim, password);
-        Alert.alert('Login berhasil');
+        const user = await login(nim, password);
+
+        // Pindah ke Dashboard + kirim userId (karena login kamu pakai table users)
+        navigation.replace('Dashboard', { userId: user.id });
       } else {
-        await register({ fullName, nim, faculty, password });
+        await register({ fullName, nim, password });
+
         Alert.alert('Registrasi berhasil', 'Silakan login');
         switchMode('login');
       }
@@ -97,7 +103,7 @@ export default function AuthScreen() {
 
         {/* ===== ZONA TENGAH ===== */}
         <View style={styles.middleSection}>
-          {/* ===== SWITCH (posisi selalu sama) ===== */}
+          {/* ===== SWITCH ===== */}
           <View
             style={styles.switchContainer}
             onLayout={(e) => setSwitchWidth(e.nativeEvent.layout.width)}
@@ -127,7 +133,7 @@ export default function AuthScreen() {
 
           {/* ===== FORM ===== */}
           <View style={styles.form}>
-            {/* Slot 1 (posisi Y sama di login & register) */}
+            {/* Slot 1 */}
             <Text style={styles.label}>{slot1Label}</Text>
             <TextInput
               style={styles.input}
@@ -138,7 +144,7 @@ export default function AuthScreen() {
               autoCapitalize="none"
             />
 
-            {/* Slot 2 (posisi Y sama di login & register) */}
+            {/* Slot 2 */}
             <Text style={styles.label}>{slot2Label}</Text>
             <TextInput
               style={styles.input}
@@ -150,18 +156,18 @@ export default function AuthScreen() {
               autoCapitalize="none"
             />
 
-            {/* Slot 3: Fakultas (hanya register) - invisible saat login tapi di bawah, jadi tidak bolong di tengah */}
+            {/* Slot 3: Fakultas (register only, tapi tetap ambil tempat saat login) */}
             <View pointerEvents={isRegister ? 'auto' : 'none'} style={!isRegister && styles.invisible}>
               <Text style={styles.label}>Fakultas</Text>
               <TextInput
                 style={styles.input}
-                value={faculty}
-                onChangeText={setFaculty}
+                value={fakultas}
+                onChangeText={setfakultas}
                 placeholder="Masukkan Fakultas"
               />
             </View>
 
-            {/* Slot 4: Password (hanya register) - invisible saat login */}
+            {/* Slot 4: Password (register only, tapi tetap ambil tempat saat login) */}
             <View pointerEvents={isRegister ? 'auto' : 'none'} style={!isRegister && styles.invisible}>
               <Text style={styles.label}>Password</Text>
               <TextInput

@@ -1,3 +1,4 @@
+// ...existing code...
 import { getSupabase } from './supabase';
 
 /* ================= LOGIN ================= */
@@ -10,12 +11,17 @@ export async function login(nim, password) {
 
   const { data, error } = await supabase
     .from('users')
-    .select('id, full_name, nim, faculty, level, xp, streak')
+    .select('id, full_name, nim, level, xp, streak')
     .eq('nim', nim)
     .eq('password', password)
-    .single();
+    .maybeSingle();
 
-  if (error || !data) {
+  if (error) {
+    console.error('Supabase login error:', error);
+    throw new Error(error.message || 'Login gagal');
+  }
+
+  if (!data) {
     throw new Error('NIM atau password salah');
   }
 
@@ -23,32 +29,37 @@ export async function login(nim, password) {
 }
 
 /* ================= REGISTER ================= */
-export async function register({ fullName, nim, faculty, password }) {
+export async function register({ fullName, nim, password }) {
   const supabase = getSupabase();
 
-  if (!fullName || !nim || !faculty || !password) {
+  if (!fullName || !nim || !password) {
     throw new Error('Semua field wajib diisi');
   }
 
-  /* Cek NIM sudah terdaftar */
-  const { data: existingUser } = await supabase
+  // cek NIM sudah terdaftar
+  const { data: existingUser, error: checkErr } = await supabase
     .from('users')
     .select('id')
     .eq('nim', nim)
-    .single();
+    .maybeSingle();
+
+  if (checkErr) {
+    console.error('Supabase check existing error:', checkErr);
+    throw new Error(checkErr.message || 'Cek registrasi gagal');
+  }
 
   if (existingUser) {
     throw new Error('NIM sudah terdaftar');
   }
 
+  // insert hanya kolom yang ada di schema
   const { data, error } = await supabase
     .from('users')
     .insert([
       {
         full_name: fullName,
-        nim: nim,
-        faculty: faculty,
-        password: password, // ⚠️ plaintext (technical debt)
+        nim,
+        password, // peringatan: plaintext, pertimbangkan hashing atau supabase auth
         level: 1,
         xp: 0,
         streak: 0,
@@ -58,8 +69,10 @@ export async function register({ fullName, nim, faculty, password }) {
     .single();
 
   if (error) {
-    throw new Error('Gagal melakukan registrasi');
+    console.error('Supabase insert error:', error);
+    throw new Error(error.message || 'Gagal melakukan registrasi');
   }
 
   return data;
 }
+// ...existing code...
