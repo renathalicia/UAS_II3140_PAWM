@@ -116,8 +116,7 @@ export default function AssignmentScreen({ navigation, route }) {
         style={[styles.assignmentCard, overdue && styles.assignmentCardOverdue]} 
         activeOpacity={0.7}
         onPress={() => {
-          // Navigate to assignment detail (bisa ditambahkan nanti)
-          console.log('Open assignment:', item);
+          navigation.navigate('AssignmentDetail', { assignment: item, userId });
         }}
       >
         <View style={styles.cardHeader}>

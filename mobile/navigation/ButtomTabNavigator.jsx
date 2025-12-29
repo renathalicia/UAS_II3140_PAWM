@@ -11,7 +11,6 @@ import styles from './ButtomTabNavigator.style';
 import NewsDetailScreen from '../screens/NewsDetailScreen';
 import MaterialDetailScreen from '../screens/MaterialDetailScreen';
 import PlaceholderScreen from '../screens/PlaceholderScreen';
-import styles from './ButtomTabNavigator.style';
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
