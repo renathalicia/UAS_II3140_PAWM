@@ -20,7 +20,7 @@ import styles from './DashboardScreen.style';
 import { getSupabase } from '../services/supabase';
 
 const XP_MAX = 100;
-const TOPBAR_HEIGHT = 56; // hanya top bar (streak/level/xp) yang fixed
+const TOPBAR_HEIGHT = 64;
 
 function Dropdown({ label, value, onSelect, options = [] }) {
   const [open, setOpen] = useState(false);
@@ -70,7 +70,8 @@ function Dropdown({ label, value, onSelect, options = [] }) {
 export default function DashboardScreen({ navigation, route }) {
   const userId = route?.params?.userId;
   const screenW = Dimensions.get('window').width;
-  const FEATURED_CARD_WIDTH = Math.round(screenW - 64);
+  const FEATURED_CARD_WIDTH = screenW - 32;
+  const FEATURED_ITEM_WIDTH = FEATURED_CARD_WIDTH + 12;
 
   const [loading, setLoading] = useState(true);
 
@@ -222,18 +223,19 @@ export default function DashboardScreen({ navigation, route }) {
     setFilters((p) => ({ ...p, search: '' }));
   };
 
-  const onFeaturedScroll = (e) => {
-    const x = e.nativeEvent.contentOffset.x;
-    const step = FEATURED_CARD_WIDTH + 12;
-    const idx = Math.round(x / step);
-    setFeaturedIndex(Math.max(0, Math.min(idx, (featured?.length || 1) - 1)));
-  };
+  const onFeaturedViewableItemsChanged = useRef(({ viewableItems }) => {
+    if (viewableItems.length > 0) {
+      setFeaturedIndex(viewableItems[0].index ?? 0);
+    }
+  }).current;
+
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 50,
+  }).current;
 
   const renderFeaturedItem = ({ item }) => {
-    const CARD_W = FEATURED_CARD_WIDTH;
-
     return (
-      <View style={[styles.featuredCard, { width: CARD_W }]} key={String(item.id)}>
+      <View style={[styles.featuredCard, { width: FEATURED_CARD_WIDTH, marginRight: 12 }]}>
         {item.image_url ? (
           <Image source={{ uri: item.image_url }} style={styles.featuredImage} />
         ) : (
@@ -248,7 +250,11 @@ export default function DashboardScreen({ navigation, route }) {
             {item.description}
           </Text>
 
-          <TouchableOpacity style={styles.readBtn} activeOpacity={0.85}>
+          <TouchableOpacity
+            style={styles.readBtn}
+            activeOpacity={0.85}
+            onPress={() => navigation.navigate('NewsDetail', { newsId: item.id })}
+          >
             <Text style={styles.readBtnText}>Baca</Text>
           </TouchableOpacity>
         </View>
@@ -258,7 +264,11 @@ export default function DashboardScreen({ navigation, route }) {
 
   const renderMaterialItem = ({ item }) => {
     return (
-      <TouchableOpacity style={styles.materialCard} activeOpacity={0.9}>
+      <TouchableOpacity
+        style={styles.materialCard}
+        activeOpacity={0.9}
+        onPress={() => navigation.navigate('MaterialDetail', { materialId: item.id })}
+      >
         <View style={styles.materialImageWrap}>
           {item.thumbnail_url ? (
             <Image source={{ uri: item.thumbnail_url }} style={styles.materialImage} />
@@ -297,10 +307,8 @@ export default function DashboardScreen({ navigation, route }) {
       : defaultCategories.map((c) => ({ label: c, value: c }))),
   ];
 
-  // Scrollable content header (greeting + search + featured + filter)
   const ScrollableHeader = () => (
     <View>
-      {/* greeting + search are scrollable */}
       <View style={styles.headerBlock}>
         <Text style={styles.helloText} numberOfLines={1}>
           Halo, {user?.full_name ?? 'User'}
@@ -340,17 +348,22 @@ export default function DashboardScreen({ navigation, route }) {
             keyExtractor={(it) => String(it.id)}
             horizontal
             showsHorizontalScrollIndicator={false}
-            decelerationRate="fast"
-            snapToInterval={FEATURED_CARD_WIDTH + 12}
+            pagingEnabled
+            snapToInterval={FEATURED_ITEM_WIDTH}
             snapToAlignment="start"
-            onMomentumScrollEnd={onFeaturedScroll}
-            scrollEventThrottle={16}
+            decelerationRate="fast"
             renderItem={renderFeaturedItem}
             contentContainerStyle={{ paddingHorizontal: 16 }}
+            getItemLayout={(data, index) => ({
+              length: FEATURED_ITEM_WIDTH,
+              offset: FEATURED_ITEM_WIDTH * index,
+              index,
+            })}
+            onViewableItemsChanged={onFeaturedViewableItemsChanged}
+            viewabilityConfig={viewabilityConfig}
             initialNumToRender={3}
             windowSize={5}
             removeClippedSubviews={false}
-            pagingEnabled={false}
           />
 
           <View style={styles.dotsRow}>
@@ -393,18 +406,16 @@ export default function DashboardScreen({ navigation, route }) {
     );
   }
 
-  // compute status bar padding so top bar tidak menimpa status bar
   const STATUSBAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight || 24 : 20;
   const TOPBAR_TOTAL = TOPBAR_HEIGHT + STATUSBAR_HEIGHT;
 
   return (
     <SafeAreaView style={styles.safe}>
-      {/* ONLY TOP BAR fixed */}
       <View style={[styles.topFixed, { height: TOPBAR_TOTAL, paddingTop: STATUSBAR_HEIGHT }]}>
         <View style={styles.topBar}>
           <View style={styles.topStats}>
             <View style={styles.topStatItem}>
-              <Ionicons name="flame" size={20} color="#ff7a00" />
+              <Ionicons name="flame" size={24} color="#ff7a00" />
               <Text style={styles.topStatText}>{streakValue}</Text>
             </View>
 
@@ -423,14 +434,12 @@ export default function DashboardScreen({ navigation, route }) {
         </View>
       </View>
 
-      {/* SCROLLABLE CONTENT (greeting, search, featured + materials)
-          add paddingTop so content starts below the fixed top bar */}
       <FlatList
         data={materials}
         keyExtractor={(it) => String(it.id)}
         numColumns={2}
         columnWrapperStyle={styles.materialGridRow}
-        contentContainerStyle={[styles.listContent, { paddingTop: TOPBAR_TOTAL }]}
+        contentContainerStyle={[styles.listContent, { paddingTop: TOPBAR_TOTAL + 12 }]}
         ListHeaderComponent={ScrollableHeader}
         renderItem={renderMaterialItem}
         ListEmptyComponent={<Text style={styles.emptyText}>Tidak ada materi untuk filter/pencarian ini.</Text>}
