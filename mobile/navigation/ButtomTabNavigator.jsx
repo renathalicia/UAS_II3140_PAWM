@@ -4,6 +4,7 @@ import { View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import DashboardScreen from '../screens/DashboardScreen';
+import AssignmentScreen from '../screens/AssignmentScreen';
 import styles from './ButtomTabNavigator.style';
 // placeholder screens (akan dibuat menyusul)
 import PlaceholderScreen from '../screens/PlaceholderScreen';
@@ -53,8 +54,8 @@ export default function BottomTabNavigator({ route }) {
       />
       <Tab.Screen
         name="Assignment"
-        component={PlaceholderScreen}
-        initialParams={{ userId, title: 'Assignment' }}
+        component={AssignmentScreen}
+        initialParams={{ userId }}
         options={{ tabBarLabel: 'Assignment' }}
       />
       <Tab.Screen
