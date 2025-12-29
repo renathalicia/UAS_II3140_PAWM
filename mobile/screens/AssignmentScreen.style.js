@@ -28,9 +28,9 @@ export default StyleSheet.create({
     marginBottom: 20,
   },
   pageTitle: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#0f172a',
+    fontSize: 22,
+    fontWeight: '900',
+    color: '#111827',
     marginBottom: 4,
     fontFamily: 'System',
   },
@@ -82,7 +82,7 @@ export default StyleSheet.create({
   statusSubmitted: {
     backgroundColor: '#d1fae5',
   },
-  statusUnsubmitted: {
+  statusNotSubmitted: {
     backgroundColor: '#fee2e2',
   },
   statusDefault: {
@@ -92,6 +92,13 @@ export default StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     fontFamily: 'System',
+    color: '#374151',
+  },
+  statusTextSubmitted: {
+    color: '#065f46',
+  },
+  statusTextNotSubmitted: {
+    color: '#991b1b',
   },
   assignmentTitle: {
     fontSize: 16,

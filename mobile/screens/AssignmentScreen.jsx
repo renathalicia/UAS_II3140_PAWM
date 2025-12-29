@@ -31,7 +31,7 @@ export default function AssignmentScreen({ navigation, route }) {
 
     try {
       if (showLoader) setLoading(true);
-      const data = await fetchUserAssignments();
+      const data = await fetchUserAssignments(userId);
       setAssignments(data);
     } catch (error) {
       console.error('Error loading assignments:', error);
@@ -70,30 +70,30 @@ export default function AssignmentScreen({ navigation, route }) {
     }
   };
 
-  const getStatusStyle = (status) => {
-    switch (status?.toLowerCase()) {
+  const getStatusStyle = (displayStatus) => {
+    switch (displayStatus?.toLowerCase()) {
       case 'submitted':
         return styles.statusSubmitted;
-      case 'unsubmitted':
-        return styles.statusUnsubmitted;
+      case 'not submitted':
+        return styles.statusNotSubmitted;
       default:
         return styles.statusDefault;
     }
   };
 
-  const getStatusLabel = (status) => {
-    switch (status?.toLowerCase()) {
+  const getStatusLabel = (displayStatus) => {
+    switch (displayStatus?.toLowerCase()) {
       case 'submitted':
         return 'Submitted';
-      case 'unsubmitted':
-        return 'Unsubmitted';
+      case 'not submitted':
+        return 'Not Submitted';
       default:
-        return status || '-';
+        return displayStatus || '-';
     }
   };
 
-  const isOverdue = (endDate, status) => {
-    if (status?.toLowerCase() === 'submitted') return false;
+  const isOverdue = (endDate, hasSubmission) => {
+    if (hasSubmission) return false;
     if (!endDate) return false;
     
     try {
@@ -109,7 +109,7 @@ export default function AssignmentScreen({ navigation, route }) {
   const renderAssignmentItem = ({ item }) => {
     // Handle different possible column names for end date
     const endDate = item.due_date || item.end_date || item.deadline;
-    const overdue = isOverdue(endDate, item.status);
+    const overdue = isOverdue(endDate, item.hasSubmission);
 
     return (
       <TouchableOpacity 
@@ -123,8 +123,13 @@ export default function AssignmentScreen({ navigation, route }) {
           <View style={styles.chapterBadge}>
             <Text style={styles.chapterText}>{item.chapter || item.unit || 'N/A'}</Text>
           </View>
-          <View style={[styles.statusBadge, getStatusStyle(item.status)]}>
-            <Text style={styles.statusText}>{getStatusLabel(item.status)}</Text>
+          <View style={[styles.statusBadge, getStatusStyle(item.displayStatus)]}>
+            <Text style={[styles.statusText, 
+              item.displayStatus?.toLowerCase() === 'submitted' && styles.statusTextSubmitted,
+              item.displayStatus?.toLowerCase() === 'not submitted' && styles.statusTextNotSubmitted
+            ]}>
+              {getStatusLabel(item.displayStatus)}
+            </Text>
           </View>
         </View>
 

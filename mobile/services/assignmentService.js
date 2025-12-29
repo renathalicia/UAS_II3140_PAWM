@@ -1,20 +1,49 @@
 import { getSupabase } from './supabase';
 
 /**
- * Fetch all assignments
- * @returns {Promise<Array>} Array of assignment objects
+ * Fetch all assignments with user submission status
+ * @param {string} userId - User ID
+ * @returns {Promise<Array>} Array of assignment objects with submission status
  */
-export async function fetchUserAssignments() {
+export async function fetchUserAssignments(userId) {
   const supabase = getSupabase();
 
   try {
-    const { data, error } = await supabase
+    // Fetch assignments
+    const { data: assignments, error: assignmentError } = await supabase
       .from('assignments')
-      .select('*');
+      .select('*')
+      .order('due_date', { ascending: true });
 
-    if (error) throw error;
+    if (assignmentError) throw assignmentError;
 
-    return data || [];
+    // Fetch user submissions
+    const { data: submissions, error: submissionError } = await supabase
+      .from('assignment_submissions')
+      .select('assignment_id, id, submitted_at')
+      .eq('user_id', userId);
+
+    if (submissionError) throw submissionError;
+
+    // Create a map of submission status by assignment_id
+    const submissionMap = {};
+    (submissions || []).forEach(sub => {
+      submissionMap[sub.assignment_id] = {
+        hasSubmission: true,
+        submittedAt: sub.submitted_at,
+      };
+    });
+
+    // Merge submission status into assignments
+    const enrichedAssignments = (assignments || []).map(assignment => ({
+      ...assignment,
+      hasSubmission: submissionMap[assignment.id]?.hasSubmission || false,
+      submittedAt: submissionMap[assignment.id]?.submittedAt || null,
+      // Add display status
+      displayStatus: submissionMap[assignment.id]?.hasSubmission ? 'submitted' : 'not submitted',
+    }));
+
+    return enrichedAssignments;
   } catch (error) {
     console.error('Error fetching assignments:', error);
     throw error;
