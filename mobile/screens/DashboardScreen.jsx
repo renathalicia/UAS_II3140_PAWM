@@ -430,7 +430,7 @@ export default function DashboardScreen({ navigation, route }) {
         keyExtractor={(it) => String(it.id)}
         numColumns={2}
         columnWrapperStyle={styles.materialGridRow}
-        contentContainerStyle={[styles.listContent, { paddingTop: TOPBAR_TOTAL + 12 }]}
+        contentContainerStyle={[styles.listContent, { paddingTop: TOPBAR_TOTAL }]}
         ListHeaderComponent={ScrollableHeader}
         renderItem={renderMaterialItem}
         ListEmptyComponent={<Text style={styles.emptyText}>Tidak ada materi untuk filter/pencarian ini.</Text>}
