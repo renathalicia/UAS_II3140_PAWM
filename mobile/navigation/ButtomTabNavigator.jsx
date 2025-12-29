@@ -1,15 +1,33 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, StyleSheet } from 'react-native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import DashboardScreen from '../screens/DashboardScreen';
 import AssignmentScreen from '../screens/AssignmentScreen';
 import styles from './ButtomTabNavigator.style';
 // placeholder screens (akan dibuat menyusul)
+import NewsDetailScreen from '../screens/NewsDetailScreen';
+import MaterialDetailScreen from '../screens/MaterialDetailScreen';
 import PlaceholderScreen from '../screens/PlaceholderScreen';
+import styles from './ButtomTabNavigator.style';
 
 const Tab = createBottomTabNavigator();
+const HomeStack = createNativeStackNavigator();
+
+// Stack untuk Home tab (berisi Dashboard + NewsDetail + MaterialDetail)
+function HomeStackScreen({ route }) {
+  const userId = route?.params?.userId;
+
+  return (
+    <HomeStack.Navigator screenOptions={{ headerShown: false }}>
+      <HomeStack.Screen name="HomeDashboard" component={DashboardScreen} initialParams={{ userId }} />
+      <HomeStack.Screen name="NewsDetail" component={NewsDetailScreen} />
+      <HomeStack.Screen name="MaterialDetail" component={MaterialDetailScreen} />
+    </HomeStack.Navigator>
+  );
+}
 
 export default function BottomTabNavigator({ route }) {
   const userId = route?.params?.userId;
@@ -46,12 +64,7 @@ export default function BottomTabNavigator({ route }) {
         },
       })}
     >
-      <Tab.Screen
-        name="Home"
-        component={DashboardScreen}
-        initialParams={{ userId }}
-        options={{ tabBarLabel: 'Home' }}
-      />
+      <Tab.Screen name="Home" component={HomeStackScreen} initialParams={{ userId }} options={{ tabBarLabel: 'Home' }} />
       <Tab.Screen
         name="Assignment"
         component={AssignmentScreen}
@@ -73,4 +86,3 @@ export default function BottomTabNavigator({ route }) {
     </Tab.Navigator>
   );
 }
-
