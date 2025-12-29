@@ -157,7 +157,7 @@ export default function DashboardScreen({ navigation, route }) {
 
     let q = supabase
       .from('learning_materials')
-      .select('id, title, description, chapter, category, level, thumbnail_url, content_url, date_published')
+      .select('id, title, description, chapter, category, level, thumbnail_url, content, date_published')
       .eq('is_active', true)
       .order('date_published', { ascending: false })
       .limit(50);

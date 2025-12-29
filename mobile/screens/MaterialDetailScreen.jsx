@@ -49,8 +49,8 @@ export default function MaterialDetailScreen({ navigation, route }) {
   }, [materialId, navigation]);
 
   const openContentUrl = () => {
-    if (material?.content_url) {
-      Linking.openURL(material.content_url).catch(() => {
+    if (material?.content) {
+      Linking.openURL(material.content).catch(() => {
         Alert.alert('Error', 'Tidak dapat membuka link');
       });
     }
@@ -105,17 +105,9 @@ export default function MaterialDetailScreen({ navigation, route }) {
 
           <Text style={styles.sectionTitle}>Konten Materi</Text>
           <Text style={styles.contentText}>
-            {material?.content_url
-              ? 'Silakan buka link di bawah untuk mempelajari materi lengkap.'
-              : 'Konten belum tersedia.'}
+            {material?.content ? material.content : 'Konten belum tersedia.'}
           </Text>
 
-          {material?.content_url ? (
-            <TouchableOpacity style={styles.linkBtn} onPress={openContentUrl}>
-              <Text style={styles.linkBtnText}>Buka Materi</Text>
-              <Ionicons name="open-outline" size={16} color="#fff" />
-            </TouchableOpacity>
-          ) : null}
         </View>
       </ScrollView>
     </SafeAreaView>
