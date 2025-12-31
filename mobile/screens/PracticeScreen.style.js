@@ -1,0 +1,190 @@
+import { StyleSheet } from 'react-native';
+
+export default StyleSheet.create({
+  safe: {
+    flex: 1,
+    backgroundColor: '#f0f9ff',
+  },
+  container: {
+    flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 12,
+  },
+  loadingText: {
+    fontSize: 14,
+    color: '#64748b',
+    fontFamily: 'System',
+  },
+  
+  // Top Bar Stats (sama kayak Dashboard)
+  topBar: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#f0f9ff',
+  },
+  topStats: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  topStatItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 12,
+    height: 48,
+    borderRadius: 999,
+    backgroundColor: 'transparent',
+  },
+  topStatLabel: {
+    fontSize: 16,
+    color: '#6b7280',
+    fontWeight: '800',
+    fontFamily: 'System',
+  },
+  topStatText: {
+    fontSize: 20,
+    color: '#111827',
+    fontWeight: '900',
+    fontFamily: 'System',
+  },
+  xpWrap: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 14,
+    height: 48,
+    borderRadius: 999,
+    backgroundColor: 'transparent',
+  },
+  xpBar: {
+    flex: 1,
+    height: 14,
+    borderRadius: 999,
+    backgroundColor: '#e5e7eb',
+    overflow: 'hidden',
+  },
+  xpFill: {
+    height: '100%',
+    borderRadius: 999,
+    backgroundColor: '#34a853',
+  },
+  xpText: {
+    fontSize: 15,
+    color: '#111827',
+    fontWeight: '800',
+    fontFamily: 'System',
+  },
+  
+  header: {
+    padding: 20,
+    paddingBottom: 16,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: '900',
+    color: '#0B3C5D',
+    fontFamily: 'System',
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: '#64748b',
+    fontFamily: 'System',
+    marginTop: 4,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    padding: 20,
+    paddingTop: 10,
+  },
+  unitContainer: {
+    marginBottom: 40,
+  },
+  unitHeader: {
+    backgroundColor: '#ffffff',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  unitTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#0B3C5D',
+    fontFamily: 'System',
+  },
+  sectionsPath: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 20,
+  },
+  sectionWrapper: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  sectionCircle: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#ffffff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 4,
+    borderColor: '#0B3C5D',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  sectionCompleted: {
+    borderColor: '#10b981',
+    backgroundColor: '#d1fae5',
+  },
+  sectionLocked: {
+    borderColor: '#e5e7eb',
+    backgroundColor: '#f3f4f6',
+  },
+  beeContainer: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  beeImage: {
+    width: 70,
+    height: 70,
+  },
+  checkmarkBadge: {
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#d1fae5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#10b981',
+  },
+  sectionLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#475569',
+    textAlign: 'center',
+    fontFamily: 'System',
+  },
+});

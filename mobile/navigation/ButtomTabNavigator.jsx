@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import DashboardScreen from '../screens/DashboardScreen';
 import AssignmentScreen from '../screens/AssignmentScreen';
+import PracticeScreen from '../screens/PracticeScreen';
 import styles from './ButtomTabNavigator.style';
 import ProfileScreen from '../screens/ProfileScreen';
 import NewsDetailScreen from '../screens/NewsDetailScreen';
@@ -72,8 +73,8 @@ export default function BottomTabNavigator({ route }) {
       />
       <Tab.Screen
         name="Practice"
-        component={PlaceholderScreen}
-        initialParams={{ userId, title: 'Practice' }}
+        component={PracticeScreen}
+        initialParams={{ userId }}
         options={{ tabBarLabel: 'Practice' }}
       />
       <Tab.Screen
