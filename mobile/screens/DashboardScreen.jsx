@@ -13,6 +13,7 @@ import {
   Modal,
   Platform,
   StatusBar,
+  ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -92,7 +93,7 @@ export default function DashboardScreen({ navigation, route }) {
   });
   const [searchInput, setSearchInput] = useState('');
 
-  const featuredListRef = useRef(null);
+  const featuredScrollRef = useRef(null);
 
   const xpValue = useMemo(() => {
     const raw = user?.xp ?? stats?.total_xp_earned ?? 0;
@@ -223,43 +224,13 @@ export default function DashboardScreen({ navigation, route }) {
     setFilters((p) => ({ ...p, search: '' }));
   };
 
-  const onFeaturedViewableItemsChanged = useRef(({ viewableItems }) => {
-    if (viewableItems.length > 0) {
-      setFeaturedIndex(viewableItems[0].index ?? 0);
+  // useMomentum end instead of onScroll; avoid frequent state updates while user is dragging
+  const onFeaturedMomentumEnd = (event) => {
+    const scrollX = event.nativeEvent?.contentOffset?.x ?? 0;
+    const newIndex = Math.round(scrollX / FEATURED_ITEM_WIDTH);
+    if (newIndex >= 0 && newIndex < featured.length && newIndex !== featuredIndex) {
+      setFeaturedIndex(newIndex);
     }
-  }).current;
-
-  const viewabilityConfig = useRef({
-    itemVisiblePercentThreshold: 50,
-  }).current;
-
-  const renderFeaturedItem = ({ item }) => {
-    return (
-      <View style={[styles.featuredCard, { width: FEATURED_CARD_WIDTH, marginRight: 12 }]}>
-        {item.image_url ? (
-          <Image source={{ uri: item.image_url }} style={styles.featuredImage} />
-        ) : (
-          <View style={styles.featuredImage} />
-        )}
-
-        <View style={styles.featuredContent}>
-          <Text style={styles.featuredTitle} numberOfLines={2}>
-            {item.title}
-          </Text>
-          <Text style={styles.featuredDesc} numberOfLines={3}>
-            {item.description}
-          </Text>
-
-          <TouchableOpacity
-            style={styles.readBtn}
-            activeOpacity={0.85}
-            onPress={() => navigation.navigate('NewsDetail', { newsId: item.id })}
-          >
-            <Text style={styles.readBtnText}>Baca</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
   };
 
   const renderMaterialItem = ({ item }) => {
@@ -307,94 +278,114 @@ export default function DashboardScreen({ navigation, route }) {
       : defaultCategories.map((c) => ({ label: c, value: c }))),
   ];
 
-  const ScrollableHeader = () => (
-    <View>
-      <View style={styles.headerBlock}>
-        <Text style={styles.helloText} numberOfLines={1}>
-          Halo, {user?.full_name ?? 'User'}
-        </Text>
-        <Text style={styles.subGreeting}>Selamat datang di Lingobee</Text>
-      </View>
-
-      <View style={styles.searchRow}>
-        <View style={styles.searchInputWrap}>
-          <TextInput
-            value={searchInput}
-            onChangeText={setSearchInput}
-            placeholder="Cari sesuatu..."
-            placeholderTextColor="#9aa3ad"
-            style={styles.searchInput}
-            returnKeyType="search"
-            onSubmitEditing={applySearch}
-            blurOnSubmit={Platform.OS === 'ios' ? false : true}
-          />
-          {searchInput?.length ? (
-            <TouchableOpacity onPress={clearSearch} style={styles.clearBtn} hitSlop={10}>
-              <Ionicons name="close-circle" size={18} color="#9aa3ad" />
-            </TouchableOpacity>
-          ) : null}
+  // Memoize header to avoid re-creating on every render (prevent ScrollView reset)
+  const ScrollableHeader = useMemo(() => {
+    return (
+      <View>
+        <View style={styles.headerBlock}>
+          <Text style={styles.helloText} numberOfLines={1}>
+            Halo, {user?.full_name ?? 'User'}
+          </Text>
+          <Text style={styles.subGreeting}>Selamat datang di Lingobee</Text>
         </View>
 
-        <TouchableOpacity style={styles.searchBtn} onPress={applySearch} activeOpacity={0.85}>
-          <Ionicons name="search" size={18} color="#0b2b3a" />
-        </TouchableOpacity>
-      </View>
+        <View style={styles.searchRow}>
+          <View style={styles.searchInputWrap}>
+            <TextInput
+              value={searchInput}
+              onChangeText={setSearchInput}
+              placeholder="Cari sesuatu..."
+              placeholderTextColor="#9aa3ad"
+              style={styles.searchInput}
+              returnKeyType="search"
+              onSubmitEditing={applySearch}
+              blurOnSubmit={Platform.OS === 'ios' ? false : true}
+            />
+            {searchInput?.length ? (
+              <TouchableOpacity onPress={clearSearch} style={styles.clearBtn} hitSlop={10}>
+                <Ionicons name="close-circle" size={18} color="#9aa3ad" />
+              </TouchableOpacity>
+            ) : null}
+          </View>
 
-      {featured?.length ? (
-        <View style={styles.featuredWrap}>
-          <FlatList
-            ref={featuredListRef}
-            data={featured}
-            keyExtractor={(it) => String(it.id)}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            pagingEnabled
-            snapToInterval={FEATURED_ITEM_WIDTH}
-            snapToAlignment="start"
-            decelerationRate="fast"
-            renderItem={renderFeaturedItem}
-            contentContainerStyle={{ paddingHorizontal: 16 }}
-            getItemLayout={(data, index) => ({
-              length: FEATURED_ITEM_WIDTH,
-              offset: FEATURED_ITEM_WIDTH * index,
-              index,
-            })}
-            onViewableItemsChanged={onFeaturedViewableItemsChanged}
-            viewabilityConfig={viewabilityConfig}
-            initialNumToRender={3}
-            windowSize={5}
-            removeClippedSubviews={false}
-          />
+          <TouchableOpacity style={styles.searchBtn} onPress={applySearch} activeOpacity={0.85}>
+            <Ionicons name="search" size={18} color="#0b2b3a" />
+          </TouchableOpacity>
+        </View>
 
-          <View style={styles.dotsRow}>
-            {featured.map((_, idx) => (
-              <View key={idx} style={[styles.dot, idx === featuredIndex && styles.dotActive]} />
-            ))}
+        {featured?.length ? (
+          <View style={styles.featuredWrap}>
+            <ScrollView
+              ref={featuredScrollRef}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 16 }}
+              onMomentumScrollEnd={onFeaturedMomentumEnd} // use momentum end
+              decelerationRate="fast"
+              snapToInterval={FEATURED_ITEM_WIDTH}
+              snapToAlignment="start"
+              disableIntervalMomentum={true}
+            >
+              {featured.map((item) => (
+                <TouchableOpacity
+                  key={String(item.id)}
+                  style={[styles.featuredCard, { width: FEATURED_CARD_WIDTH, marginRight: 12 }]}
+                  activeOpacity={0.95}
+                  onPress={() => navigation.navigate('NewsDetail', { newsId: item.id })}
+                >
+                  {item.image_url ? (
+                    <Image source={{ uri: item.image_url }} style={styles.featuredImage} />
+                  ) : (
+                    <View style={styles.featuredImage} />
+                  )}
+
+                  <View style={styles.featuredContent}>
+                    <Text style={styles.featuredTitle} numberOfLines={2}>
+                      {item.title}
+                    </Text>
+                    <Text style={styles.featuredDesc} numberOfLines={3}>
+                      {item.description}
+                    </Text>
+
+                    <View style={styles.readBtn}>
+                      <Text style={styles.readBtnText}>Baca</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <View style={styles.dotsRow}>
+              {featured.map((_, idx) => (
+                <View key={idx} style={[styles.dot, idx === featuredIndex && styles.dotActive]} />
+              ))}
+            </View>
+          </View>
+        ) : null}
+
+        <View style={styles.materiHeader}>
+          <Text style={styles.sectionTitle}>Materi</Text>
+
+          <View style={styles.filterRow}>
+            <Dropdown
+              label="Semua Bab"
+              value={filters.chapter}
+              options={chapterOptionsForDropdown}
+              onSelect={(v) => setFilters((p) => ({ ...p, chapter: v }))}
+            />
+
+            <Dropdown
+              label="Semua Kategori"
+              value={filters.category}
+              options={categoryOptionsForDropdown}
+              onSelect={(v) => setFilters((p) => ({ ...p, category: v }))}
+            />
           </View>
         </View>
-      ) : null}
-
-      <View style={styles.materiHeader}>
-        <Text style={styles.sectionTitle}>Materi</Text>
-
-        <View style={styles.filterRow}>
-          <Dropdown
-            label="Semua Bab"
-            value={filters.chapter}
-            options={chapterOptionsForDropdown}
-            onSelect={(v) => setFilters((p) => ({ ...p, chapter: v }))}
-          />
-
-          <Dropdown
-            label="Semua Kategori"
-            value={filters.category}
-            options={categoryOptionsForDropdown}
-            onSelect={(v) => setFilters((p) => ({ ...p, category: v }))}
-          />
-        </View>
       </View>
-    </View>
-  );
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [featured, user, searchInput, featuredIndex, FEATURED_CARD_WIDTH, filters.chapter, filters.category]);
 
   if (loading) {
     return (
