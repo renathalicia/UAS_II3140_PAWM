@@ -5,7 +5,8 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "plugins": [
-      "expo-font"
+      "expo-font",
+      "@react-native-community/datetimepicker"
     ],
     "splash": {
       "resizeMode": "contain",

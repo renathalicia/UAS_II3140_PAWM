@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import DashboardScreen from '../screens/DashboardScreen';
 import AssignmentScreen from '../screens/AssignmentScreen';
 import styles from './ButtomTabNavigator.style';
-// placeholder screens (akan dibuat menyusul)
+import ProfileScreen from '../screens/ProfileScreen';
 import NewsDetailScreen from '../screens/NewsDetailScreen';
 import MaterialDetailScreen from '../screens/MaterialDetailScreen';
 import PlaceholderScreen from '../screens/PlaceholderScreen';
@@ -78,7 +78,7 @@ export default function BottomTabNavigator({ route }) {
       />
       <Tab.Screen
         name="Profile"
-        component={PlaceholderScreen}
+        component={ProfileScreen}
         initialParams={{ userId, title: 'Profile' }}
         options={{ tabBarLabel: 'Profile' }}
       />

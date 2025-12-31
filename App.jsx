@@ -14,7 +14,6 @@ export default function App() {
     Poppins_600SemiBold,
   });
 
-  // Saat font belum siap, tetap tampilkan splash GIF (jadi tidak blank / tidak loncat)
   if (!fontsLoaded) {
     return (
       <View style={{ flex: 1, backgroundColor: '#000' }}>
@@ -27,7 +26,6 @@ export default function App() {
     );
   }
 
-  // Setelah font siap, Navigator tetap mulai dari Splash screen (lihat AppNavigator: initialRouteName="Splash")
   return (
     <View style={{ flex: 1 }}>
       <AppNavigator />
