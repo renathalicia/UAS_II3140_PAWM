@@ -103,16 +103,18 @@ export async function submitNodeCompletion(userId, sectionId, nodeId, score, xpR
   const supabase = getSupabase();
 
   try {
-    // Insert completed node
+    // Upsert completed node (insert or update if already exists)
     const { error: completedError } = await supabase
       .from('completed_nodes')
-      .insert({
+      .upsert({
         user_id: userId,
         section_id: sectionId,
         node_id: nodeId,
         xp_earned: xpReward,
         score,
         completed_at: new Date().toISOString(),
+      }, {
+        onConflict: 'user_id,section_id,node_id'
       });
 
     if (completedError) throw completedError;

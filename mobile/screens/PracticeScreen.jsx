@@ -227,7 +227,7 @@ export default function PracticeScreen({ navigation, route }) {
           showsVerticalScrollIndicator={false}
         >
           {units.map((unitData, unitIndex) => (
-            <View key={unitData.unit_number}>
+            <View key={`unit-${unitData.unit_number}-${unitIndex}`}>
               {renderUnit(unitData, unitIndex)}
             </View>
           ))}
