@@ -4,18 +4,23 @@
     "slug": "lingobee",
     "version": "1.0.0",
     "orientation": "portrait",
+    "userInterfaceStyle": "light",
     "plugins": [
       "expo-font",
       "@react-native-community/datetimepicker"
     ],
     "splash": {
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "jsEngine": "hermes",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.catherinealicia08.lingobee"
+    },
     "android": {
       "package": "com.catherinealicia08.lingobee"
     }
