@@ -31,7 +31,6 @@ export default function PracticeScreen({ navigation, route }) {
   }, [userId]);
 
   useEffect(() => {
-    // Refresh when screen comes into focus
     const unsubscribe = navigation.addListener('focus', () => {
       loadData();
     });
@@ -48,7 +47,6 @@ export default function PracticeScreen({ navigation, route }) {
     try {
       setLoading(true);
       
-      // Fetch user data and practice sections
       const supabase = getSupabase();
       const { data: userData, error: userError } = await supabase
         .from('users')
@@ -70,104 +68,162 @@ export default function PracticeScreen({ navigation, route }) {
     }
   };
 
-  const canAccessSection = (unitIndex, sectionIndex) => {
-    // First unit, first section is always accessible
-    if (unitIndex === 0 && sectionIndex === 0) return true;
-
-    // Check if previous section is completed
-    if (sectionIndex > 0) {
-      const prevSection = units[unitIndex].sections[sectionIndex - 1];
-      return prevSection.isCompleted;
+  const canAccessNode = (section, nodeIndex) => {
+    // First node in first section of first unit is always accessible
+    if (nodeIndex === 0) {
+      return section.canAccess;
     }
 
-    // Check if previous unit's last section is completed
-    if (unitIndex > 0) {
-      const prevUnit = units[unitIndex - 1];
-      const lastSection = prevUnit.sections[prevUnit.sections.length - 1];
-      return lastSection.isCompleted;
-    }
-
-    return false;
+    // Check if previous node is completed
+    const prevNode = section.nodes[nodeIndex - 1];
+    return prevNode.isCompleted;
   };
 
-  const handleSectionPress = (section, canAccess) => {
+  const handleNodePress = (section, node, canAccess) => {
     if (!canAccess) {
-      Alert.alert('Locked', 'Complete the previous section to unlock this one');
-      return;
-    }
-
-    // Find first uncompleted node or first node
-    const targetNode = section.nodes.find(n => !n.isCompleted) || section.nodes[0];
-    
-    if (!targetNode) {
-      Alert.alert('No Nodes', 'This section has no practice nodes yet');
+      Alert.alert('Locked', 'Complete the previous stage to unlock this one');
       return;
     }
 
     navigation.navigate('PracticeQuiz', { 
       userId, 
       sectionId: section.id,
-      nodeId: targetNode.id,
-      nodeType: targetNode.node_type,
-      xpReward: targetNode.xp_reward || 10,
+      nodeId: node.id,
+      nodeType: node.node_type,
+      xpReward: node.xp_reward || 10,
     });
   };
 
-  const renderSection = (section, unitIndex, sectionIndex) => {
-    const canAccess = canAccessSection(unitIndex, sectionIndex);
-    const isCompleted = section.isCompleted;
+  const getNodeIcon = (node, canAccess) => {
+    if (node.isCompleted) {
+      return (
+        <View style={styles.nodeCompleted}>
+          <Ionicons name="checkmark" size={24} color="#10b981" />
+        </View>
+      );
+    }
+
+    if (!canAccess) {
+      return (
+        <View style={styles.nodeLocked}>
+          <Ionicons name="lock-closed" size={20} color="#9ca3af" />
+        </View>
+      );
+    }
+
+    // Current active node
+    return (
+      <View style={styles.nodeActive}>
+        <Ionicons name="play" size={20} color="#ffffff" />
+      </View>
+    );
+  };
+
+  const renderNode = (section, node, nodeIndex) => {
+    const canAccess = canAccessNode(section, nodeIndex);
+    const isCompleted = node.isCompleted;
 
     return (
       <TouchableOpacity
-        key={section.id}
+        key={node.id}
         style={[
-          styles.sectionCircle,
-          isCompleted && styles.sectionCompleted,
-          !canAccess && styles.sectionLocked,
+          styles.nodeCircle,
+          isCompleted && styles.nodeCircleCompleted,
+          !canAccess && styles.nodeCircleLocked,
+          canAccess && !isCompleted && styles.nodeCircleActive,
         ]}
-        onPress={() => handleSectionPress(section, canAccess)}
+        onPress={() => handleNodePress(section, node, canAccess)}
         disabled={!canAccess}
         activeOpacity={0.7}
       >
-        {isCompleted ? (
-          <View style={styles.beeContainer}>
-            <Image 
-              source={require('../assets/bee2.png')} 
-              style={styles.beeImage}
-              resizeMode="contain"
-            />
-            <View style={styles.checkmarkBadge}>
-              <Ionicons name="checkmark" size={16} color="#10b981" />
-            </View>
+        <Image 
+          source={require('../assets/bee2.png')} 
+          style={styles.beeImage}
+          resizeMode="contain"
+        />
+        {getNodeIcon(node, canAccess)}
+      </TouchableOpacity>
+    );
+  };
+
+  const renderSection = (section, unitIndex, sectionIndex) => {
+    const nodes = section.nodes || [];
+    const completedCount = nodes.filter(n => n.isCompleted).length;
+    const totalCount = nodes.length;
+
+    // Determine section color based on unit
+    const sectionColors = ['#c084fc', '#fbbf24', '#34d399', '#60a5fa'];
+    const colorIndex = unitIndex % sectionColors.length;
+    const sectionColor = section.color || sectionColors[colorIndex];
+
+    return (
+      <View key={section.id} style={styles.sectionContainer}>
+        {/* Section Header */}
+        <View style={[styles.sectionHeader, { backgroundColor: sectionColor }]}>
+          <View style={styles.sectionHeaderLeft}>
+            {section.section_number && section.unit_number && (
+              <Text style={styles.sectionHeaderText}>
+                SECTION {section.section_number}, UNIT {section.unit_number}
+              </Text>
+            )}
+            <Text style={styles.sectionTitle}>{section.title}</Text>
           </View>
-        ) : canAccess ? (
+        </View>
+
+        {/* Nodes Path */}
+        <View style={styles.nodesPath}>
+          {/* Big Bee on the left */}
           <Image 
             source={require('../assets/bee2.png')} 
-            style={styles.beeImage}
+            style={styles.beeLarge}
             resizeMode="contain"
           />
-        ) : (
-          <Ionicons name="lock-closed" size={32} color="#9ca3af" />
+
+          {/* Nodes arranged in a path */}
+          <View style={styles.nodesGrid}>
+            {nodes.map((node, nodeIndex) => (
+              <View key={node.id} style={styles.nodeWrapper}>
+                {renderNode(section, node, nodeIndex)}
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* Progress Indicator */}
+        {totalCount > 0 && (
+          <View style={styles.progressSection}>
+            <Text style={styles.progressText}>
+              {completedCount}/{totalCount} completed
+            </Text>
+            <View style={styles.progressBarContainer}>
+              <View 
+                style={[
+                  styles.progressBarFill, 
+                  { 
+                    width: `${(completedCount / totalCount) * 100}%`,
+                    backgroundColor: sectionColor 
+                  }
+                ]} 
+              />
+            </View>
+          </View>
         )}
-      </TouchableOpacity>
+      </View>
     );
   };
 
   const renderUnit = (unitData, unitIndex) => {
     return (
-      <View key={unitData.unit_number} style={styles.unitContainer}>
-        <View style={styles.unitHeader}>
-          <Text style={styles.unitTitle}>Unit {unitData.unit_number}</Text>
-        </View>
+      <View key={`unit-${unitData.unit_number}-${unitIndex}`} style={styles.unitContainer}>
+        {unitData.sections.map((section, sectionIndex) => {
+          // Add canAccess property to section
+          const canAccessSection = 
+            (unitIndex === 0 && sectionIndex === 0) ||
+            (sectionIndex > 0 && unitData.sections[sectionIndex - 1].isCompleted) ||
+            (unitIndex > 0 && units[unitIndex - 1].sections[units[unitIndex - 1].sections.length - 1].isCompleted);
 
-        <View style={styles.sectionsPath}>
-          {unitData.sections.map((section, sectionIndex) => (
-            <View key={section.id} style={styles.sectionWrapper}>
-              {renderSection(section, unitIndex, sectionIndex)}
-              <Text style={styles.sectionLabel}>{section.title}</Text>
-            </View>
-          ))}
-        </View>
+          return renderSection({ ...section, canAccess: canAccessSection }, unitIndex, sectionIndex);
+        })}
       </View>
     );
   };
@@ -193,7 +249,7 @@ export default function PracticeScreen({ navigation, route }) {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={[styles.container, { paddingTop: STATUSBAR_HEIGHT }]}>
-        {/* Top Stats Bar (sama kayak Dashboard) */}
+        {/* Top Stats Bar */}
         <View style={styles.topBar}>
           <View style={styles.topStats}>
             <View style={styles.topStatItem}>

@@ -117,11 +117,11 @@ export default function PracticeQuizScreen({ navigation, route }) {
       setHearts(newHearts);
 
       if (newHearts <= 0) {
-        // No more hearts - end practice
+        // No more hearts - end practice, NO XP
         setTimeout(() => {
           Alert.alert(
             '😢 No more hearts!',
-            'Practice ended.',
+            'Practice ended. You need to restart this stage.',
             [
               {
                 text: 'OK',
@@ -137,20 +137,33 @@ export default function PracticeQuizScreen({ navigation, route }) {
 
   const handleNext = () => {
     setShowResult(false);
+    setSelectedWords([]);
     
-    if (currentIndex < questions.length - 1) {
-      const nextIndex = currentIndex + 1;
-      setCurrentIndex(nextIndex);
-      loadQuestion(questions[nextIndex]);
+    if (isCorrect) {
+      // Jika benar, lanjut ke soal berikutnya
+      if (currentIndex < questions.length - 1) {
+        const nextIndex = currentIndex + 1;
+        setCurrentIndex(nextIndex);
+        loadQuestion(questions[nextIndex]);
+      } else {
+        // Sudah soal terakhir, submit results
+        handleSubmit();
+      }
     } else {
-      // Last question, submit results
-      handleSubmit();
+      // Jika salah, ulangi soal yang sama (shuffle ulang words)
+      loadQuestion(currentQuestion);
     }
   };
 
   const handleSubmit = async () => {
     try {
-      const score = Math.round((correctCount / questions.length) * 100);
+      // Hanya submit jika semua benar (correctCount === questions.length)
+      if (correctCount !== questions.length) {
+        Alert.alert('Incomplete', 'You must answer all questions correctly to complete this stage.');
+        return;
+      }
+
+      const score = 100; // Perfect score karena semua benar
       
       const result = await submitNodeCompletion(
         userId,
@@ -160,7 +173,7 @@ export default function PracticeQuizScreen({ navigation, route }) {
         xpReward
       );
 
-      let message = `You got ${correctCount}/${questions.length} correct!`;
+      let message = `Perfect! You got all ${questions.length} questions correct!`;
       
       if (result.xpGained > 0) {
         message += `\n\n✨ +${result.xpGained} XP earned!`;
@@ -174,7 +187,7 @@ export default function PracticeQuizScreen({ navigation, route }) {
         message += `\n\n🎉 Level Up! You are now level ${result.newLevel}!`;
       }
 
-      Alert.alert('Practice Complete', message, [
+      Alert.alert('Stage Complete! 🎉', message, [
         {
           text: 'Continue',
           onPress: () => navigation.goBack(),
@@ -302,7 +315,7 @@ export default function PracticeQuizScreen({ navigation, route }) {
               <Text style={styles.resultText}>
                 {isCorrect 
                   ? 'Correct! Great job!' 
-                  : `Incorrect. Correct answer: ${
+                  : `Incorrect. Try again! Correct answer: ${
                       Array.isArray(currentQuestion.correct_answer) 
                         ? currentQuestion.correct_answer.join(' ')
                         : currentQuestion.correct_answer
@@ -319,18 +332,17 @@ export default function PracticeQuizScreen({ navigation, route }) {
             <TouchableOpacity
               style={styles.skipButton}
               onPress={() => {
-                if (currentIndex < questions.length - 1) {
-                  handleNext();
-                }
+                Alert.alert('Skip', 'Skip is not allowed in this mode');
               }}
+              disabled
             >
-              <Text style={styles.skipButtonText}>Skip</Text>
+              <Text style={[styles.skipButtonText, { opacity: 0.3 }]}>Skip</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.checkButton, selectedWords.length === 0 && styles.checkButtonDisabled]}
               onPress={handleCheck}
-              disabled={selectedWords.length === 0}
+              disabled={selectedWords.length === 0 || hearts <= 0}
             >
               <Text style={styles.checkButtonText}>Check</Text>
             </TouchableOpacity>
@@ -341,7 +353,9 @@ export default function PracticeQuizScreen({ navigation, route }) {
               style={styles.continueButton}
               onPress={handleNext}
             >
-              <Text style={styles.continueButtonText}>Continue</Text>
+              <Text style={styles.continueButtonText}>
+                {isCorrect ? 'Continue' : 'Try Again'}
+              </Text>
             </TouchableOpacity>
           </View>
         )}

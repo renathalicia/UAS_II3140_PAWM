@@ -80,7 +80,8 @@ export default StyleSheet.create({
     fontWeight: '800',
     fontFamily: 'System',
   },
-  
+
+  // Header
   header: {
     padding: 20,
     paddingBottom: 16,
@@ -97,94 +98,175 @@ export default StyleSheet.create({
     fontFamily: 'System',
     marginTop: 4,
   },
+  
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    padding: 20,
-    paddingTop: 10,
+    paddingBottom: 40,
   },
+
+  // Unit Container
   unitContainer: {
-    marginBottom: 40,
-  },
-  unitHeader: {
-    backgroundColor: '#ffffff',
-    padding: 16,
-    borderRadius: 12,
     marginBottom: 20,
+  },
+
+  // Section Container
+  sectionContainer: {
+    marginBottom: 24,
+    marginHorizontal: 16,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: '#e5f3ff',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
-  unitTitle: {
-    fontSize: 20,
+
+  // Section Header
+  sectionHeader: {
+    padding: 16,
+    paddingVertical: 20,
+  },
+  sectionHeaderLeft: {
+    flex: 1,
+  },
+  sectionHeaderText: {
+    fontSize: 12,
     fontWeight: '700',
-    color: '#0B3C5D',
+    color: 'rgba(255, 255, 255, 0.9)',
+    marginBottom: 4,
     fontFamily: 'System',
   },
-  sectionsPath: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: 20,
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: '#ffffff',
+    fontFamily: 'System',
   },
-  sectionWrapper: {
-    alignItems: 'center',
-    gap: 8,
+
+  // Nodes Path
+  nodesPath: {
+    flexDirection: 'row',
+    padding: 20,
+    paddingTop: 30,
+    paddingBottom: 30,
+    minHeight: 200,
   },
-  sectionCircle: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+  beeLarge: {
+    width: 120,
+    height: 120,
+    marginRight: 20,
+    marginTop: 20,
+  },
+  nodesGrid: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+    alignContent: 'flex-start',
+  },
+  nodeWrapper: {
+    width: '30%',
+    aspectRatio: 1,
+    maxWidth: 80,
+  },
+
+  // Node Circle
+  nodeCircle: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 40,
     backgroundColor: '#ffffff',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 4,
-    borderColor: '#0B3C5D',
+    borderColor: '#cbd5e1',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 4,
+    position: 'relative',
   },
-  sectionCompleted: {
+  nodeCircleCompleted: {
     borderColor: '#10b981',
     backgroundColor: '#d1fae5',
   },
-  sectionLocked: {
+  nodeCircleLocked: {
     borderColor: '#e5e7eb',
     backgroundColor: '#f3f4f6',
   },
-  beeContainer: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
+  nodeCircleActive: {
+    borderColor: '#f59e0b',
+    backgroundColor: '#fef3c7',
   },
   beeImage: {
-    width: 70,
-    height: 70,
+    width: 50,
+    height: 50,
   },
-  checkmarkBadge: {
+  nodeCompleted: {
     position: 'absolute',
-    bottom: 5,
-    right: 5,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    bottom: -4,
+    right: -4,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     backgroundColor: '#d1fae5',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: '#10b981',
   },
-  sectionLabel: {
+  nodeLocked: {
+    position: 'absolute',
+    bottom: -4,
+    right: -4,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#f3f4f6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: '#e5e7eb',
+  },
+  nodeActive: {
+    position: 'absolute',
+    bottom: -4,
+    right: -4,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#f59e0b',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: '#fbbf24',
+  },
+
+  // Progress Section
+  progressSection: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  progressText: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#475569',
-    textAlign: 'center',
+    color: '#64748b',
+    marginBottom: 8,
     fontFamily: 'System',
+  },
+  progressBarContainer: {
+    height: 8,
+    backgroundColor: '#ffffff',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: '100%',
+    borderRadius: 4,
   },
 });
