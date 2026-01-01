@@ -15,6 +15,35 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  
+  // Fixed Header (sama kayak MaterialDetail)
+  fixedHeader: {
+    height: 60,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#111827',
+    fontFamily: 'System',
+  },
+  
+  scrollView: {
+    flex: 1,
+  },
   scrollContent: {
     padding: 16,
     paddingBottom: 32,

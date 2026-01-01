@@ -419,19 +419,23 @@ export default function AssignmentDetailScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={[styles.container, { paddingTop: STATUSBAR_HEIGHT }]}>
-        {/* Back Button */}
-        <View style={{ padding: 16, paddingBottom: 0 }}>
-          <TouchableOpacity
+      <View style={styles.container}>
+        {/* Fixed Header with Back Button */}
+        <View style={styles.fixedHeader}>
+          <TouchableOpacity 
+            style={styles.backBtn} 
             onPress={() => navigation.goBack()}
-            style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
           >
-            <Ionicons name="arrow-back" size={24} color="#0B3C5D" />
-            <Text style={{ fontSize: 16, color: '#0B3C5D', fontWeight: '600' }}>Back</Text>
+            <Ionicons name="arrow-back" size={24} color="#111827" />
           </TouchableOpacity>
+          <Text style={styles.headerTitle}>Assignment</Text>
         </View>
 
-        <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+        <ScrollView 
+          style={styles.scrollView} 
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
           {/* Header */}
           <View style={styles.header}>
             <View style={styles.headerTop}>
