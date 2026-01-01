@@ -240,6 +240,8 @@ export default function PracticeScreen({ navigation, route }) {
   }
 
   const STATUSBAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight || 24 : 20;
+  const TOPBAR_HEIGHT = 64;
+  const TOPBAR_TOTAL = TOPBAR_HEIGHT + STATUSBAR_HEIGHT;
   
   const xpValue = user?.xp || 0;
   const xpProgress = Math.min(xpValue, XP_MAX) / XP_MAX;
@@ -248,8 +250,7 @@ export default function PracticeScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={[styles.container, { paddingTop: STATUSBAR_HEIGHT }]}>
-        {/* Top Stats Bar */}
+      <View style={[styles.topFixed, { height: TOPBAR_TOTAL, paddingTop: STATUSBAR_HEIGHT }]}>
         <View style={styles.topBar}>
           <View style={styles.topStats}>
             <View style={styles.topStatItem}>
@@ -270,25 +271,25 @@ export default function PracticeScreen({ navigation, route }) {
             </View>
           </View>
         </View>
+      </View>
 
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={[styles.scrollContent, { paddingTop: TOPBAR_TOTAL }]}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Practice</Text>
           <Text style={styles.headerSubtitle}>Complete sections to gain XP</Text>
         </View>
 
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          {units.map((unitData, unitIndex) => (
-            <View key={`unit-${unitData.unit_number}-${unitIndex}`}>
-              {renderUnit(unitData, unitIndex)}
-            </View>
-          ))}
-        </ScrollView>
-      </View>
+        {units.map((unitData, unitIndex) => (
+          <View key={`unit-${unitData.unit_number}-${unitIndex}`}>
+            {renderUnit(unitData, unitIndex)}
+          </View>
+        ))}
+      </ScrollView>
     </SafeAreaView>
   );
 }

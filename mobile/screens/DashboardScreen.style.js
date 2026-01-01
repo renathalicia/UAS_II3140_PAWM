@@ -1,9 +1,12 @@
 import { StyleSheet } from 'react-native';
+import { DESIGN_SYSTEM } from '../style/design';
+
+const { colors, typography, spacing, borderRadius, shadow } = DESIGN_SYSTEM;
 
 export default StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#f5f7fa',
+    backgroundColor: colors.background,
   },
 
   loading: {
@@ -13,7 +16,6 @@ export default StyleSheet.create({
   },
 
   listContent: {
-    paddingHorizontal: 16,
     paddingBottom: 24,
   },
 
@@ -24,9 +26,9 @@ export default StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 50,
-    backgroundColor: '#f5f7fa',
-    paddingHorizontal: 16,
-    paddingTop: 20, // status bar offset
+    backgroundColor: colors.background,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.xl,
     paddingBottom: 0,
   },
 
@@ -45,65 +47,62 @@ export default StyleSheet.create({
   topStatItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 12,
-    height: 48, // lebih besar
-    borderRadius: 999,
+    gap: spacing.sm,
+    paddingHorizontal: spacing.md,
+    height: 48,
+    borderRadius: borderRadius.full,
     backgroundColor: 'transparent',
   },
   topStatLabel: {
-    fontSize: 16, // diperbesar dari 13
-    color: '#6b7280',
-    fontWeight: '800',
+    ...typography.label,
+    color: colors.textSecondary,
   },
   topStatText: {
-    fontSize: 20, // diperbesar dari 15
-    color: '#111827',
+    fontSize: 20,
+    color: colors.textPrimary,
     fontWeight: '900',
   },
   xpWrap: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: spacing.md,
     paddingHorizontal: 14,
-    height: 48, // lebih besar
-    borderRadius: 999,
+    height: 48,
+    borderRadius: borderRadius.full,
     backgroundColor: 'transparent',
   },
   xpBar: {
     flex: 1,
-    height: 14, // lebih tebal dari 10
-    borderRadius: 999,
-    backgroundColor: '#e5e7eb',
+    height: 14,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.border,
     overflow: 'hidden',
   },
   xpFill: {
     height: '100%',
-    borderRadius: 999,
-    backgroundColor: '#34a853',
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.success,
   },
   xpText: {
-    fontSize: 15, // diperbesar dari 12
-    color: '#111827',
+    fontSize: 15,
+    color: colors.textPrimary,
     fontWeight: '800',
   },
 
   /* Header block (scrollable) - DIANGKAT */
   headerBlock: {
-    marginTop: 6, // dikecilkan dari 8 agar lebih dekat
-    marginBottom: 15,
-    paddingHorizontal: 16,
+    marginTop: 0,
+    marginBottom: 8,
+    paddingHorizontal: spacing.lg,
   },
   helloText: {
-    fontSize: 22, // sedikit lebih besar
-    fontWeight: '900',
-    color: '#111827',
+    ...typography.pageTitle,
+    color: colors.textPrimary,
   },
   subGreeting: {
+    ...typography.pageSubtitle,
     marginTop: 5,
-    color: '#6b7280',
-    fontSize: 14, // sedikit lebih besar
   },
 
   /* Search (scrollable) */
@@ -111,24 +110,24 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    marginHorizontal: 16,
-    marginBottom: 8,
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.sm,
   },
   searchInputWrap: {
     flex: 1,
     height: 40,
-    borderRadius: 999,
-    backgroundColor: '#fff',
-    paddingLeft: 12,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.surface,
+    paddingLeft: spacing.md,
     paddingRight: 10,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: colors.border,
     flexDirection: 'row',
     alignItems: 'center',
   },
   searchInput: {
     flex: 1,
-    color: '#111827',
+    color: colors.textPrimary,
     fontSize: 14,
   },
   clearBtn: {
@@ -138,12 +137,12 @@ export default StyleSheet.create({
   searchBtn: {
     width: 46,
     height: 40,
-    borderRadius: 12,
-    backgroundColor: '#eef2f7',
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.background,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: colors.border,
   },
 
   /* Featured & rest (unchanged) */
@@ -151,17 +150,18 @@ export default StyleSheet.create({
     marginBottom: 14,
   },
   featuredCard: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#eef2f7',
-    marginRight: 12,
+    borderColor: colors.background,
+    marginRight: spacing.md,
+    ...shadow.sm,
   },
   featuredImage: {
     width: '100%',
     height: 170,
-    backgroundColor: '#e5e7eb',
+    backgroundColor: colors.border,
   },
   featuredContent: {
     padding: 14,
@@ -169,25 +169,25 @@ export default StyleSheet.create({
   featuredTitle: {
     fontSize: 18,
     fontWeight: '900',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 6,
   },
   featuredDesc: {
     fontSize: 13,
-    color: '#6b7280',
+    color: colors.textSecondary,
     lineHeight: 18,
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   readBtn: {
   alignSelf: 'flex-start',
-  backgroundColor: '#0b4d78',
+  backgroundColor: colors.primary,
   paddingHorizontal: 18,
   paddingVertical: 10,
-  borderRadius: 999,
+  borderRadius: borderRadius.full,
   pointerEvents: 'none',
 },
   readBtnText: {
-    color: '#fff',
+    color: colors.surface,
     fontWeight: '800',
   },
   dotsRow: {
@@ -205,17 +205,16 @@ export default StyleSheet.create({
   dotActive: {
     width: 28,
     borderRadius: 6,
-    backgroundColor: '#0b4d78',
+    backgroundColor: colors.primary,
   },
 
   materiHeader: {
-    marginTop: 8,
-    paddingHorizontal: 16,
+    marginTop: spacing.sm,
+    paddingHorizontal: spacing.lg,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: '900',
-    color: '#111827',
+    ...typography.sectionTitle,
+    color: colors.textPrimary,
     marginBottom: 10,
   },
   filterRow: {
@@ -228,38 +227,39 @@ export default StyleSheet.create({
   dropdownButton: {
     flex: 1,
     height: 46,
-    borderRadius: 999,
-    backgroundColor: '#fff',
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: colors.border,
     paddingHorizontal: 14,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   dropdownLabel: {
-    color: '#111827',
+    color: colors.textPrimary,
     fontSize: 14,
   },
 
   /* Materials grid and cards */
   materialGridRow: {
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
   },
   materialCard: {
     width: '48%',
-    backgroundColor: '#fff',
-    borderRadius: 16,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#eef2f7',
-    marginBottom: 12,
+    borderColor: colors.background,
+    marginBottom: spacing.md,
+    ...shadow.sm,
   },
   materialImageWrap: {
     width: '100%',
     height: 120,
-    backgroundColor: '#e5e7eb',
+    backgroundColor: colors.border,
   },
   materialImage: {
     width: '100%',
@@ -268,33 +268,33 @@ export default StyleSheet.create({
   },
   materialImagePlaceholder: {
     flex: 1,
-    backgroundColor: '#e5e7eb',
+    backgroundColor: colors.border,
   },
   materialBody: {
-    padding: 12,
+    padding: spacing.md,
   },
   materialTitle: {
     fontSize: 14,
     fontWeight: '900',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 6,
   },
   materialDesc: {
     fontSize: 12,
-    color: '#6b7280',
-    marginBottom: 8,
+    color: colors.textSecondary,
+    marginBottom: spacing.sm,
     lineHeight: 16,
   },
   materialMeta: {
     fontSize: 12,
-    color: '#9ca3af',
+    color: colors.textMuted,
     fontWeight: '700',
   },
 
   emptyText: {
-    color: '#6b7280',
-    paddingBottom: 16,
-    paddingTop: 8,
+    color: colors.textSecondary,
+    paddingBottom: spacing.lg,
+    paddingTop: spacing.sm,
   },
 
   dropdownBackdrop: {
@@ -304,26 +304,26 @@ export default StyleSheet.create({
     paddingHorizontal: 28,
   },
   dropdownModal: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.md,
     maxHeight: 320,
     overflow: 'hidden',
   },
   dropdownItem: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: '#f1f5f9',
+    borderBottomColor: colors.background,
   },
   dropdownItemText: {
     fontSize: 15,
-    color: '#111827',
+    color: colors.textPrimary,
   },
   dropdownItemSelected: {
     backgroundColor: '#eef6ff',
   },
   dropdownItemTextSelected: {
-    color: '#0b4d78',
+    color: colors.primary,
     fontWeight: '700',
   },
 });

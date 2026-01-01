@@ -1,11 +1,85 @@
 import { StyleSheet } from 'react-native';
-import { COLORS } from '../style/colors';
+import { DESIGN_SYSTEM } from '../style/design';
+
+const { colors, typography, spacing, borderRadius, shadow } = DESIGN_SYSTEM;
 
 export default StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.background,
   },
+  
+  /* ===== Fixed Top Bar ===== */
+  topFixed: {
+    position: 'absolute',
+    top: 20,
+    left: 0,
+    right: 0,
+    zIndex: 50,
+    backgroundColor: colors.background,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.xl,
+    paddingBottom: 0,
+  },
+
+  /* Top Bar */
+  topBar: {
+    height: 70,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  topStats: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  topStatItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.md,
+    height: 48,
+    borderRadius: borderRadius.full,
+    backgroundColor: 'transparent',
+  },
+  topStatLabel: {
+    ...typography.label,
+    color: colors.textSecondary,
+  },
+  topStatText: {
+    fontSize: 20,
+    color: colors.textPrimary,
+    fontWeight: '900',
+  },
+  xpWrap: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingHorizontal: 14,
+    height: 48,
+    borderRadius: borderRadius.full,
+    backgroundColor: 'transparent',
+  },
+  xpBar: {
+    flex: 1,
+    height: 14,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.border,
+    overflow: 'hidden',
+  },
+  xpFill: {
+    height: '100%',
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.success,
+  },
+  xpText: {
+    fontSize: 15,
+    color: colors.textPrimary,
+    fontWeight: '800',
+  },
+
   container: {
     flex: 1,
   },
@@ -17,40 +91,36 @@ export default StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-    color: '#64748b',
+    color: colors.textSecondary,
     fontFamily: 'System',
   },
   listContent: {
-    padding: 16,
+    padding: spacing.lg,
     paddingBottom: 32,
   },
   headerSection: {
-    marginBottom: 20,
+    marginTop: 0,
+    marginBottom: 8,
   },
   pageTitle: {
-    fontSize: 22,
-    fontWeight: '900',
-    color: '#111827',
-    marginBottom: 4,
+    ...typography.pageTitle,
+    color: colors.textPrimary,
+    marginBottom: spacing.xs,
     fontFamily: 'System',
   },
   pageSubtitle: {
-    fontSize: 14,
-    color: '#64748b',
+    ...typography.pageSubtitle,
+    color: colors.textSecondary,
     fontFamily: 'System',
   },
   assignmentCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 2,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.md,
+    padding: spacing.lg,
+    marginBottom: spacing.md,
+    ...shadow.sm,
     borderWidth: 1,
-    borderColor: '#e2e8f0',
+    borderColor: colors.border,
   },
   assignmentCardOverdue: {
     borderColor: '#fecaca',
@@ -64,8 +134,8 @@ export default StyleSheet.create({
   },
   chapterBadge: {
     backgroundColor: '#e0f2fe',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
     borderRadius: 6,
   },
   chapterText: {
@@ -75,8 +145,8 @@ export default StyleSheet.create({
     fontFamily: 'System',
   },
   statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
     borderRadius: 6,
   },
   statusSubmitted: {
@@ -101,10 +171,9 @@ export default StyleSheet.create({
     color: '#991b1b',
   },
   assignmentTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#0f172a',
-    marginBottom: 12,
+    ...typography.cardTitle,
+    color: colors.textPrimary,
+    marginBottom: spacing.md,
     lineHeight: 22,
     fontFamily: 'System',
   },
@@ -120,11 +189,11 @@ export default StyleSheet.create({
   },
   deadlineText: {
     fontSize: 13,
-    color: '#64748b',
+    color: colors.textSecondary,
     fontFamily: 'System',
   },
   deadlineOverdue: {
-    color: '#ef4444',
+    color: colors.error,
     fontWeight: '500',
   },
   overdueTag: {
@@ -148,14 +217,14 @@ export default StyleSheet.create({
   emptyText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#64748b',
-    marginTop: 16,
-    marginBottom: 4,
+    color: colors.textSecondary,
+    marginTop: spacing.lg,
+    marginBottom: spacing.xs,
     fontFamily: 'System',
   },
   emptySubtext: {
     fontSize: 14,
-    color: '#94a3b8',
+    color: colors.textMuted,
     textAlign: 'center',
     fontFamily: 'System',
   },

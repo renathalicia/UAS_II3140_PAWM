@@ -15,6 +15,10 @@ import { Ionicons } from '@expo/vector-icons';
 
 import styles from './AssignmentScreen.style';
 import { fetchUserAssignments } from '../services/assignmentService';
+import { getSupabase } from '../services/supabase';
+
+const XP_MAX = 100;
+const TOPBAR_HEIGHT = 64;
 
 export default function AssignmentScreen({ navigation, route }) {
   const userId = route?.params?.userId;
@@ -22,6 +26,7 @@ export default function AssignmentScreen({ navigation, route }) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [assignments, setAssignments] = useState([]);
+  const [user, setUser] = useState(null);
 
   const loadAssignments = async (showLoader = true) => {
     if (!userId) {
@@ -31,7 +36,18 @@ export default function AssignmentScreen({ navigation, route }) {
 
     try {
       if (showLoader) setLoading(true);
+      
+      const supabase = getSupabase();
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id, full_name, level, xp, streak')
+        .eq('id', userId)
+        .single();
+
+      if (userError) throw userError;
+      
       const data = await fetchUserAssignments(userId);
+      setUser(userData);
       setAssignments(data);
     } catch (error) {
       console.error('Error loading assignments:', error);
@@ -187,28 +203,55 @@ export default function AssignmentScreen({ navigation, route }) {
   }
 
   const STATUSBAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight || 24 : 20;
+  const TOPBAR_TOTAL = TOPBAR_HEIGHT + STATUSBAR_HEIGHT;
+  
+  const xpValue = user?.xp || 0;
+  const xpProgress = Math.min(xpValue, XP_MAX) / XP_MAX;
+  const xpLabel = `${Math.min(xpValue, XP_MAX)}/${XP_MAX} XP`;
+  const streakValue = user?.streak || 0;
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={[styles.container, { paddingTop: STATUSBAR_HEIGHT }]}>
-        <FlatList
-          data={assignments}
-          keyExtractor={(item) => String(item.id)}
-          renderItem={renderAssignmentItem}
-          ListHeaderComponent={renderHeader}
-          ListEmptyComponent={renderEmpty}
-          contentContainerStyle={styles.listContent}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              colors={['#0B3C5D']}
-              tintColor="#0B3C5D"
-            />
-          }
-        />
+      <View style={[styles.topFixed, { height: TOPBAR_TOTAL, paddingTop: STATUSBAR_HEIGHT }]}>
+        <View style={styles.topBar}>
+          <View style={styles.topStats}>
+            <View style={styles.topStatItem}>
+              <Ionicons name="flame" size={24} color="#ff7a00" />
+              <Text style={styles.topStatText}>{streakValue}</Text>
+            </View>
+
+            <View style={styles.topStatItem}>
+              <Text style={styles.topStatLabel}>Lvl</Text>
+              <Text style={styles.topStatText}>{user?.level || 1}</Text>
+            </View>
+
+            <View style={styles.xpWrap}>
+              <View style={styles.xpBar}>
+                <View style={[styles.xpFill, { width: `${Math.round(xpProgress * 100)}%` }]} />
+              </View>
+              <Text style={styles.xpText}>{xpLabel}</Text>
+            </View>
+          </View>
+        </View>
       </View>
+
+      <FlatList
+        data={assignments}
+        keyExtractor={(item) => String(item.id)}
+        renderItem={renderAssignmentItem}
+        ListHeaderComponent={renderHeader}
+        ListEmptyComponent={renderEmpty}
+        contentContainerStyle={[styles.listContent, { paddingTop: TOPBAR_TOTAL }]}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#0B3C5D']}
+            tintColor="#0B3C5D"
+          />
+        }
+      />
     </SafeAreaView>
   );
 }
