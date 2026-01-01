@@ -67,6 +67,7 @@ export default StyleSheet.create({
     flex: 1,
     padding: 20,
     paddingTop: 30,
+    paddingBottom: 140,
   },
   questionContainer: {
     marginBottom: 32,
@@ -165,12 +166,16 @@ export default StyleSheet.create({
   },
   resultBar: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 100,
     left: 0,
     right: 0,
     paddingVertical: 20,
     paddingHorizontal: 20,
-    paddingBottom: 100,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
   },
   resultBarCorrect: {
     backgroundColor: '#10b981',
@@ -185,9 +190,10 @@ export default StyleSheet.create({
   },
   resultText: {
     flex: 1,
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '700',
     color: '#ffffff',
+    lineHeight: 22,
     fontFamily: 'System',
   },
   footer: {
