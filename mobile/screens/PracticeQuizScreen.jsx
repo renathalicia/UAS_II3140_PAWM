@@ -61,9 +61,14 @@ export default function PracticeQuizScreen({ navigation, route }) {
   };
 
   const loadQuestion = (question) => {
-    // Parse available_words as array
+    // Parse available_words as array and remove punctuation
     const words = question.available_words || [];
-    const shuffled = [...words].sort(() => Math.random() - 0.5);
+    // Remove punctuation marks from available words
+    const cleanWords = words.map(word => 
+      word.replace(/[?!.,;:]/g, '').trim()
+    ).filter(word => word.length > 0);
+    
+    const shuffled = [...cleanWords].sort(() => Math.random() - 0.5);
     setAvailableWords(shuffled);
     setSelectedWords([]);
   };
@@ -102,7 +107,11 @@ export default function PracticeQuizScreen({ navigation, route }) {
       ? currentQuestion.correct_answer.join(' ')
       : currentQuestion.correct_answer;
     
-    const correct = userAnswer.toLowerCase().trim() === correctAnswer.toLowerCase().trim();
+    // Remove punctuation from both answers for comparison
+    const cleanUserAnswer = userAnswer.replace(/[?!.,;:]/g, '').toLowerCase().trim();
+    const cleanCorrectAnswer = correctAnswer.replace(/[?!.,;:]/g, '').toLowerCase().trim();
+    
+    const correct = cleanUserAnswer === cleanCorrectAnswer;
 
     setIsCorrect(correct);
     setShowResult(true);
