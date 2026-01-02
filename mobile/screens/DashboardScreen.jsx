@@ -198,6 +198,19 @@ export default function DashboardScreen({ navigation, route }) {
     };
   }, [userId]);
 
+  // Refresh user data when screen gets focus
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (userId) {
+        fetchInitial().catch(err => {
+          console.error('Error refreshing dashboard:', err);
+        });
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, userId]);
+
   useEffect(() => {
     let mounted = true;
     (async () => {

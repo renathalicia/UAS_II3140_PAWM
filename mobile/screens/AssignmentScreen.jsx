@@ -62,6 +62,19 @@ export default function AssignmentScreen({ navigation, route }) {
     loadAssignments();
   }, [userId]);
 
+  // Refresh user data when screen gets focus
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (userId) {
+        loadAssignments(false).catch(err => {
+          console.error('Error refreshing assignment:', err);
+        });
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, userId]);
+
   const onRefresh = () => {
     setRefreshing(true);
     loadAssignments(false);
