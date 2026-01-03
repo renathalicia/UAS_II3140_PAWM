@@ -215,8 +215,8 @@ export default function AssignmentScreen({ navigation, route }) {
     );
   }
 
-  const STATUSBAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight || 24 : 20;
-  const TOPBAR_TOTAL = TOPBAR_HEIGHT + STATUSBAR_HEIGHT;
+  const STATUSBAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight || 24 : 44;
+  const TOPBAR_TOTAL = TOPBAR_HEIGHT + STATUSBAR_HEIGHT + 8;
   
   const xpValue = user?.xp || 0;
   const xpProgress = Math.min(xpValue, XP_MAX) / XP_MAX;
@@ -254,7 +254,7 @@ export default function AssignmentScreen({ navigation, route }) {
         renderItem={renderAssignmentItem}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmpty}
-        contentContainerStyle={[styles.listContent, { paddingTop: TOPBAR_TOTAL }]}
+        contentContainerStyle={[styles.listContent, { paddingTop: TOPBAR_TOTAL + 16 }]}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl

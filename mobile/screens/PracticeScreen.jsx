@@ -239,9 +239,9 @@ export default function PracticeScreen({ navigation, route }) {
     );
   }
 
-  const STATUSBAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight || 24 : 20;
+  const STATUSBAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight || 24 : 44;
   const TOPBAR_HEIGHT = 64;
-  const TOPBAR_TOTAL = TOPBAR_HEIGHT + STATUSBAR_HEIGHT;
+  const TOPBAR_TOTAL = TOPBAR_HEIGHT + STATUSBAR_HEIGHT + 8;
   
   const xpValue = user?.xp || 0;
   const xpProgress = Math.min(xpValue, XP_MAX) / XP_MAX;
@@ -275,7 +275,7 @@ export default function PracticeScreen({ navigation, route }) {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingTop: TOPBAR_TOTAL }]}
+        contentContainerStyle={[styles.scrollContent, { paddingTop: TOPBAR_TOTAL + 16 }]}
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}

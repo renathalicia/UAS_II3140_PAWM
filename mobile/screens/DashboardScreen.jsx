@@ -410,8 +410,8 @@ export default function DashboardScreen({ navigation, route }) {
     );
   }
 
-  const STATUSBAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight || 24 : 20;
-  const TOPBAR_TOTAL = TOPBAR_HEIGHT + STATUSBAR_HEIGHT;
+  const STATUSBAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight || 24 : 44;
+  const TOPBAR_TOTAL = TOPBAR_HEIGHT + STATUSBAR_HEIGHT + 8;
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -443,7 +443,7 @@ export default function DashboardScreen({ navigation, route }) {
         keyExtractor={(it) => String(it.id)}
         numColumns={2}
         columnWrapperStyle={styles.materialGridRow}
-        contentContainerStyle={[styles.listContent, { paddingTop: TOPBAR_TOTAL }]}
+        contentContainerStyle={[styles.listContent, { paddingTop: TOPBAR_TOTAL + 16 }]}
         ListHeaderComponent={ScrollableHeader}
         renderItem={renderMaterialItem}
         ListEmptyComponent={<Text style={styles.emptyText}>Tidak ada materi untuk filter/pencarian ini.</Text>}

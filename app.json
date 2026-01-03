@@ -19,10 +19,25 @@
     "jsEngine": "hermes",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.catherinealicia08.lingobee"
+      "bundleIdentifier": "com.catherinealicia08.lingobee",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
-      "package": "com.catherinealicia08.lingobee"
+      "package": "com.catherinealicia08.lingobee",
+      "runtimeVersion": "1.0.0"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "4874324e-c8a8-4d0a-a512-25aa6b346957"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/4874324e-c8a8-4d0a-a512-25aa6b346957"
     }
   }
 }
